@@ -1,6 +1,12 @@
 const fb_login = require('./login');
 const db = require('./db');
 
+const fs = require('fs');
+
+if (process.env.APPSTATE) {
+    fs.writeFileSync("appstate.json", process.env.APPSTATE);
+}
+
 async function action(callback) {
     fb_login.connectAppState((api) => {
         api.setOptions({
