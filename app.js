@@ -1,4 +1,5 @@
 const fb_login = require('./login');
+const db = require('./db');
 
 async function monitoring() {
     fb_login.connectAppState((api) => {
@@ -13,11 +14,24 @@ async function monitoring() {
                 let date = new Date(int(message.timestamp));
                 if (date.getMinutes() == date.getHours()) {
                     console.log("C'est l'heure !!");
-                    api.setMessageReaction(":love:", message.messageID, (err) => { if (err) console.error(err) });
+                    api.setMessageReaction(":love:", message.messageID, (err) => {
+                        if (err) console.error(err)
+                    });
                 }
             }
         });
     });
 }
 
-monitoring();
+async function dump_fb() {
+    fb_login.connectAppState((api) => {
+        api.setOptions({
+            selfListen: true,
+            logLevel: "silent"
+        });
+        db.saveAll(api, undefined);
+    });
+}
+
+//monitoring();
+dump_fb();

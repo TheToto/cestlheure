@@ -1,5 +1,5 @@
-const login = require("facebook-chat-api");
 require('dotenv').config();
+const login = require("facebook-chat-api");
 const fs = require("fs");
 
 function generateAppState(callback) {
@@ -24,7 +24,7 @@ function connectAppState(callback) {
     login({ appState: appstate }, (err, api) => {
         if (err) {
             console.log("Failed to login with appstate.json...");
-            fb_login.generateAppState((api) => callback(api));
+            generateAppState((api) => callback(api));
             return;
         }
         console.log("Logged !");

@@ -1,21 +1,40 @@
-const mongo = require('mongodb');
+require('dotenv').config();
+const MongoClient = require('mongodb').MongoClient;
 
-function saveAll(api, timestamp){
-    api.getThreadHistory(threadID, 50, timestamp, (err, history) => {
-        if(err) return console.error(err);
+function saveAll(api, timestamp) {
+    console.log("Load time : " + timestamp);
+    api.getThreadHistory('2175128779192067', 20, timestamp, (err, history) => {
+        if (err) return console.error(err);
+
+        console.log("Loaded time : " + timestamp);
+        if (timestamp != undefined) history.pop();
         if (history.length == 0) return console.error("History finished");
 
-        if(timestamp != undefined) history.pop();
+        saveMessages(history);
 
-        for (let i in history) {
-            saveMessage(history[i]);
-        }
-
-       nextTimestamp = history[0].timestamp;
-       saveAll(api, nextTimestamp);
+        nextTimestamp = history[0].timestamp;
+        saveAll(api, nextTimestamp);
     });
 }
 
-function saveMessage(message) {
-
+function saveMessages(messages) {
+    for (let i in messages) {
+        messages[i]._id = messages[i].messageID;
+    }
+    MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
+        if (err) throw err;
+        let dbo = db.db("heroku_2z8057dw");
+        dbo.collection("messages").insertMany(messages, {
+            ordered: false
+        }, function (err, res) {
+            if (err) console.log("dup was found ?");;
+            console.log("Inserted !");
+            db.close();
+        });
+    });
 }
+
+module.exports = {
+    saveAll,
+    saveMessages
+};
