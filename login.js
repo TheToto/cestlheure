@@ -8,8 +8,28 @@ function generateAppState(callback) {
         if (err) return console.error(err);
         console.log("Logged ! Saved to appstate.json");
         fs.writeFileSync('appstate.json', JSON.stringify(api.getAppState()));
-        callback();
+        callback(api);
     });
 }
 
-module.exports = { generateAppState }
+function connectAppState(callback) {
+    try {
+        appstate = JSON.parse(fs.readFileSync('appstate.json', 'utf8'));
+    } catch (error) {
+        console.log("Failed to load appstate.json...");
+        generateAppState((api) => callback(api));
+        return;
+    }
+    console.log("Login with AppState...")
+    login({ appState: appstate }, (err, api) => {
+        if (err) {
+            console.log("Failed to login with appstate.json...");
+            fb_login.generateAppState((api) => callback(api));
+            return;
+        }
+        console.log("Logged !");
+        callback(api);
+    });
+}
+
+module.exports = { generateAppState, connectAppState }
