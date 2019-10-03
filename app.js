@@ -42,12 +42,6 @@ async function dump_thread() {
     });
 }
 
-async function dump_users() {
-    get_list_user((list) => {
-        db.dump_participants(list);
-    });
-}
-
 async function info_thread(callback) {
     action((api) => {
         api.getThreadInfo('2175128779192067', function (err, info) {
@@ -57,7 +51,7 @@ async function info_thread(callback) {
     });
 }
 
-async function get_list_user(callback) {
+async function dump_users() {
     info_thread((info, api) => {
         api.getUserInfo(info.participantIDs, (err, ret) => {
             if (err) return console.error(err);
@@ -67,12 +61,12 @@ async function get_list_user(callback) {
                 obj._id = user;
                 list.push(obj);
             }
-            callback(list);
+            db.dump_participants(list);
         });
     });
 }
 
-monitoring();
+//monitoring();
 //dump_thread();
 //dump_users();
-//db.dump_heure();
+db.fix_heure();
