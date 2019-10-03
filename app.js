@@ -17,20 +17,32 @@ async function action(callback) {
     });
 }
 
+function isSameMin(d1, d2) {
+    return d1.getDate() === d2.getDate() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getFullYear() === d2.getFullYear() &&
+        d1.getHours() == d2.getHours() &&
+        d1.getMinutes() == d2.getMinutes();
+}
+
 async function monitoring() {
+    let last_heure = new Date(1970, 1, 1, 0, 0, 0, 0);
     action((api) => {
         console.log("Start monitoring !");
         api.listen((err, message) => {
             console.log(message);
-            db.saveMessages([message]);
+
             if (message.threadID == '2175128779192067') {
-                let date = new Date(parseInt(message.timestamp));
-                if (date.getMinutes() == date.getHours()) {
+                let time = new Date(parseInt(result[i].timestamp));
+                if (!isSameMin(last_heure, time) && time.getHours() == time.getMinutes()) {
+                    message.cestlheure = 1;
+                    last_heure = time;
                     console.log("C'est l'heure !!");
-                    api.setMessageReaction(":love:", message.messageID, (err) => {
-                        if (err) console.error(err)
-                    });
+                    api.setMessageReaction(":love:", message.messageID);
+                } else {
+                    message.cestlheure = 0;
                 }
+                db.saveMessages([message]);
             }
         });
     });
@@ -66,7 +78,7 @@ async function dump_users() {
     });
 }
 
-//monitoring();
+monitoring();
 //dump_thread();
 //dump_users();
-db.fix_heure();
+//db.fix_heure();
