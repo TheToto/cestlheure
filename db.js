@@ -64,7 +64,7 @@ function isSameMin(d1, d2) {
 }
 
 async function fix_heure() {
-    return new new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         let last_heure = new Date(1970, 1, 1, 0, 0, 0, 0);
         connect().then(([dbo, db]) => {
             dbo.collection("messages").find().sort({
