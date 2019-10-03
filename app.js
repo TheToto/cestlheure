@@ -30,10 +30,13 @@ async function monitoring() {
     action((api) => {
         console.log("Start monitoring !");
         api.listen((err, message) => {
+            if (err) return console.error(err);
+            if (!message) return console.error("Message is undefined");
+            
             console.log(message);
 
             if (message.threadID == '2175128779192067') {
-                let time = new Date(parseInt(result[i].timestamp));
+                let time = new Date(parseInt(message.timestamp));
                 if (!isSameMin(last_heure, time) && time.getHours() == time.getMinutes()) {
                     message.cestlheure = 1;
                     last_heure = time;
