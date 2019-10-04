@@ -20,14 +20,14 @@ async function connectAppState() {
             appstate = JSON.parse(fs.readFileSync('appstate.json', 'utf8'));
         } catch (error) {
             console.log("Failed to load appstate.json...");
-            let api = await generateAppState().catch(error => reject(error));
+            let api = await generateAppState().catch(reject);
             return resolve(api);
         }
         console.log("Login with AppState...")
         login({ appState: appstate }, async (err, api) => {
             if (err) {
                 console.log("Failed to login with appstate.json...");
-                let api = await generateAppState().catch(error => reject(error));
+                let api = await generateAppState().catch(reject);
                 return resolve(api);
             }
             console.log("Logged !");

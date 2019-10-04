@@ -19,7 +19,7 @@ async function action() {
                 });
                 save_api = api;
                 resolve(api);
-            }).catch(error => reject(error));
+            }).catch(reject);
         } else {
             resolve(save_api);
         }
@@ -43,9 +43,8 @@ function monitoring() {
             if (err) return console.error(err);
             if (!message) return console.error("Message is undefined");
 
-            console.log(message);
-
             if (message.threadID == '2175128779192067') {
+                console.log(message);
                 let time = new Date(parseInt(message.timestamp));
                 if (!isSameMin(last_heure, time) && time.getHours() == time.getMinutes()) {
                     message.cestlheure = 1;
@@ -68,11 +67,11 @@ async function info_thread() {
                 if (err) return console.error(err);
                 resolve(info);
             });
-        }).catch(error => reject(error));
+        }).catch(reject);
     });
 }
 
-function dump_users() {
+async function dump_users() {
     return new Promise((resolve, reject) => {
         console.log("Start dumping users");
         info_thread().then((info) => {
@@ -90,8 +89,8 @@ function dump_users() {
                         resolve();
                     });
                 });
-            }).catch(error => reject(error));
-        }).catch(error => reject(error));
+            }).catch(reject);
+        }).catch(reject);
     });
 }
 
@@ -109,9 +108,9 @@ async function dump_thread(timestamp) {
                 db.saveMessages(history).then(() => console.log("Inserted " + timestamp));
 
                 timestamp = history[0].timestamp;
-                dump_thread(timestamp).then(() => resolve()).catch(error => reject(error));
+                dump_thread(timestamp).then(() => resolve()).catch(reject);
             });
-        }).catch(error => reject(error));
+        }).catch(reject);
     });
 }
 

@@ -41,7 +41,7 @@ async function saveMessages(messages, archive = false) {
             dbo.collection("messages").bulkWrite(oprations_from_list(messages));
             db.close();
             resolve();
-        }).catch(error => reject(error));
+        }).catch(reject);
     });
 }
 
@@ -51,7 +51,7 @@ async function dump_participants(id_list) {
             dbo.collection("participants").bulkWrite(oprations_from_list(id_list));
             db.close();
             resolve();
-        }).catch(error => reject(error));
+        }).catch(reject);
     });
 
 }
@@ -85,7 +85,7 @@ async function fix_heure() {
                 db.close();
                 resolve();
             });
-        }).catch(error => reject(error));
+        }).catch(reject);
     });
 }
 
