@@ -11,9 +11,9 @@
     "license": "MIT",
     "dependencies": {
         "dotenv": "^8.1.0",
-        "ejs": "^2.7.1",
         "express": "^4.17.1",
         "facebook-chat-api": "^1.6.1",
-        "mongodb": "^3.3.2"
+        "mongodb": "^3.3.2",
+        "twig": "^1.13.3"
     }
 }
