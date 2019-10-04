@@ -35,6 +35,7 @@ async function saveMessages(messages, archive = false) {
         for (let i in messages) {
             messages[i]._id = messages[i].messageID;
             messages[i].archive = archive;
+            messages[i].timestamp = parseInt(messages[i].timestamp);
         }
         connect().then(([dbo, db]) => {
             dbo.collection("messages").bulkWrite(oprations_from_list(messages));
@@ -89,6 +90,7 @@ async function fix_heure() {
 }
 
 module.exports = {
+    connect,
     saveMessages,
     dump_participants,
     fix_heure
