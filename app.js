@@ -8,12 +8,13 @@ let app = express();
 let PORT = 1234;
 
 app.get('/', function (req, res) {
-    db_fetch.getData([db_fetch.getGlobalScore, db_fetch.getCurrentMonthScore]).then((arr) => {
+    db_fetch.getData([db_fetch.getGlobalScore, db_fetch.getCurrentMonthScore, db_fetch.getScoreByMonth]).then((arr) => {
         res.render('index.twig', {
             global: arr[0],
-            month: arr[1]
+            month: arr[1],
+            bymonth: arr[2]
         });
-    }).catch((err) => res.send(err));
+    }).catch(res.send);
 });
 
 app.listen(PORT);

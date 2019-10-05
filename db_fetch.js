@@ -31,16 +31,82 @@ async function getGlobalScore(dbo) {
     });
 }
 
+async function getScoreByMonth(dbo) {
+    return new Promise((resolve, reject) => {
+        dbo.collection("messages").aggregate([{
+            $match: {
+                'cestlheure': 1
+            }
+        }, { // Group cestlheure by user and month
+            $group: {
+                _id: {
+                    sender: "$senderID",
+                    month: {
+                        $month: {
+                            date: "$timestamp",
+                            timezone: "+01"
+                        }
+                    },
+                    year: {
+                        $year: {
+                            date: "$timestamp",
+                            timezone: "+01"
+                        }
+                    },
+                },
+                count: {
+                    $sum: 1
+                }
+            }
+        }, { // Sort by count
+            $sort: {
+                count: -1
+            }
+        }, { // Get the winner of each month (it's sorted by count so it's the first)
+            $group: {
+                _id: {
+                    month: "$_id.month",
+                    year: "$_id.year"
+                },
+                senderID: {
+                    $first: "$_id.sender"
+                },
+            }
+        }, { // Group by name and count the nb of win
+            $group: {
+                _id: "$senderID",
+                count: {
+                    $sum: 1
+                }
+            }
+        }, { // Sort...
+            $sort: {
+                count: -1
+            }
+        }, {
+            $lookup: {
+                from: "participants",
+                localField: "_id",
+                foreignField: "_id",
+                as: "sender"
+            }
+        }]).toArray((err, arr) => {
+            if (err) return reject(err);
+            resolve(arr);
+        });
+    });
+}
+
 async function getMonthScore(dbo, year, month) {
-    let curMonth = new Date(year, month, 0, 0, 0, 0, 0);
-    let nextMonth = new Date(year, month + 1, 0, 0, 0, 0, 0);
+    let curMonth = new Date(year, month, 1, 0, 0, 0, 0);
+    let nextMonth = new Date(year, month + 1, 1, 0, 0, 0, 0);
     return new Promise((resolve, reject) => {
         dbo.collection("messages").aggregate([{
             $match: {
                 'cestlheure': 1,
                 'timestamp': {
-                    $gte: curMonth.getTime(),
-                    $lt: nextMonth.getTime()
+                    $gte: curMonth,
+                    $lt: nextMonth
                 }
             }
         }, {
@@ -85,13 +151,11 @@ async function getUsers(dbo) {
 async function getData(getter) {
     return new Promise((resolve, reject) => {
         db.connect().then(([dbo, db]) => {
-            console.log(getter);
             let promises = [];
             for (let get in getter) {
                 promises.push(getter[get](dbo));
             }
             Promise.all(promises).then((results) => {
-                console.log(results);
                 resolve(results);
                 db.close();
             }).catch(reject);
@@ -104,5 +168,6 @@ module.exports = {
     getGlobalScore,
     getUsers,
     getMonthScore,
-    getCurrentMonthScore
+    getCurrentMonthScore,
+    getScoreByMonth
 };
