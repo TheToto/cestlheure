@@ -107,7 +107,7 @@ async function dump_thread(timestamp) {
 
                 db.saveMessages(history).then(() => console.log("Inserted " + timestamp));
 
-                timestamp = history[0].timestamp;
+                timestamp = history[0].timestamp.getTime();
                 dump_thread(timestamp).then(() => resolve()).catch(reject);
             });
         }).catch(reject);

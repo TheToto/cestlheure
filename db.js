@@ -35,7 +35,7 @@ async function saveMessages(messages, archive = false) {
         for (let i in messages) {
             messages[i]._id = messages[i].messageID;
             messages[i].archive = archive;
-            messages[i].timestamp = parseInt(messages[i].timestamp);
+            messages[i].timestamp = new Date(parseInt(messages[i].timestamp));
         }
         connect().then(([dbo, db]) => {
             dbo.collection("messages").bulkWrite(oprations_from_list(messages));
@@ -73,7 +73,7 @@ async function fix_heure() {
             }).toArray((err, result) => {
                 if (err) throw err;
                 for (let i in result) {
-                    let time = new Date(parseInt(result[i].timestamp));
+                    let time = result[i].timestamp;
                     if (!isSameMin(last_heure, time) && time.getHours() == time.getMinutes()) {
                         result[i].cestlheure = 1;
                         last_heure = time;
