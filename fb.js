@@ -36,7 +36,7 @@ function isSameMin(d1, d2) {
 }
 
 function monitoring() {
-    let last_heure = new Date(1970, 1, 1, 0, 0, 0, 0);
+    let last_heure = new Date(1970, 0, 1, 0, 0, 0, 0);
     action().then((api) => {
         console.log("Start monitoring !");
         api.listen((err, message) => {

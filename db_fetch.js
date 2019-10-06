@@ -97,9 +97,74 @@ async function getScoreByMonth(dbo) {
     });
 }
 
+async function getChartDataByMonth(dbo) {
+    return new Promise((resolve, reject) => {
+        dbo.collection("messages").aggregate([{
+            $match: {
+                'cestlheure': 1
+            }
+        }, { // Group cestlheure by user and month
+            $group: {
+                _id: {
+                    sender: "$senderID",
+                    month: {
+                        $month: {
+                            date: "$timestamp",
+                            timezone: "+01"
+                        }
+                    },
+                    year: {
+                        $year: {
+                            date: "$timestamp",
+                            timezone: "+01"
+                        }
+                    }
+                },
+                count: {
+                    $sum: 1
+                }
+            }
+        }, {
+            $project: {
+                _id: "$_id.sender",
+                date: {
+                    year: "$_id.year",
+                    month: "$_id.month"
+                },
+                count: "$count"
+            }
+        }, {
+            $sort: {
+                date: 1
+            }
+        }, {
+            $group: {
+                _id: "$_id",
+                date: {
+                    $push: "$date"
+                },
+                count: {
+                    $push: "$count"
+                }
+            }
+        }, {
+            $lookup: {
+                from: "participants",
+                localField: "_id",
+                foreignField: "_id",
+                as: "sender"
+            }
+        }]).toArray((err, arr) => {
+            if (err) return reject(err);
+            console.log(arr);
+            resolve(arr);
+        });
+    });
+}
+
 async function getMonthScore(dbo, year, month) {
-    let curMonth = new Date(year, month, 1, 0, 0, 0, 0);
-    let nextMonth = new Date(year, month + 1, 1, 0, 0, 0, 0);
+    let curMonth = new Date(year, month - 1, 1, 0, 0, 0, 0);
+    let nextMonth = new Date(year, month, 1, 0, 0, 0, 0);
     return new Promise((resolve, reject) => {
         dbo.collection("messages").aggregate([{
             $match: {
@@ -136,7 +201,7 @@ async function getMonthScore(dbo, year, month) {
 
 async function getCurrentMonthScore(dbo) {
     let date = new Date();
-    return getMonthScore(dbo, date.getFullYear(), date.getMonth());
+    return getMonthScore(dbo, date.getFullYear(), date.getMonth() + 1);
 }
 
 async function getUsers(dbo) {
@@ -169,5 +234,6 @@ module.exports = {
     getUsers,
     getMonthScore,
     getCurrentMonthScore,
-    getScoreByMonth
+    getScoreByMonth,
+    getChartDataByMonth
 };
