@@ -161,10 +161,9 @@ async function getChartDataByMonth(dbo) {
     });
 }
 
-async function getChartDataCurrentMonth(dbo) {
-    let date = new Date();
-    let curMonth = new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0, 0);
-    let nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1, 0, 0, 0, 0);
+async function getChartDataMonth(dbo, year, month) {
+    let curMonth = new Date(year, month - 1, 1, 0, 0, 0, 0);
+    let nextMonth = new Date(year, month, 1, 0, 0, 0, 0);
     return new Promise((resolve, reject) => {
         dbo.collection("messages").aggregate([{
             $match: {
@@ -260,11 +259,6 @@ async function getMonthScore(dbo, year, month) {
     });
 }
 
-async function getCurrentMonthScore(dbo) {
-    let date = new Date();
-    return getMonthScore(dbo, date.getFullYear(), date.getMonth() + 1);
-}
-
 async function getUsers(dbo) {
     return new Promise((resolve, reject) => {
         dbo.collection("partitipants").find().toArray((err, arr) => {
@@ -294,8 +288,7 @@ module.exports = {
     getGlobalScore,
     getUsers,
     getMonthScore,
-    getCurrentMonthScore,
     getScoreByMonth,
     getChartDataByMonth,
-    getChartDataCurrentMonth
+    getChartDataMonth
 };

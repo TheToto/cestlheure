@@ -25,46 +25,60 @@ function add_one_date(date) {
 }
 
 function setUp_global() {
-    let chart_dataset = [];
-    for (let i in chart_bymonth) {
-        let date = {
-            year: 2018,
-            month: 12
-        };
-        let datas = [];
-        let index = 0;
-        while (compare_date(next_date, date) != -1) {
-            if (chart_bymonth[i].date[index] && compare_date(date, chart_bymonth[i].date[index]) == 0) {
-                datas.push(chart_bymonth[i].count[index]);
-                index++;
-            } else {
-                datas.push(null);
+    fetch('/graph/global')
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (chart_bymonth) {
+            console.log(chart_bymonth);
+            let chart_dataset = [];
+            for (let i in chart_bymonth) {
+                let date = {
+                    year: 2018,
+                    month: 12
+                };
+                let datas = [];
+                let index = 0;
+                while (compare_date(next_date, date) != -1) {
+                    if (chart_bymonth[i].date[index] && compare_date(date, chart_bymonth[i].date[index]) == 0) {
+                        datas.push(chart_bymonth[i].count[index]);
+                        index++;
+                    } else {
+                        datas.push(null);
+                    }
+                    date = add_one_date(date);
+                }
+                chart_dataset.push({
+                    label: chart_bymonth[i].sender[0].name,
+                    fill: false,
+                    backgroundColor: chart_bymonth[i].sender[0].color,
+                    borderColor: chart_bymonth[i].sender[0].color,
+                    data: datas,
+                });
             }
-            date = add_one_date(date);
-        }
-        chart_dataset.push({
-            label: chart_bymonth[i].sender[0].name,
-            fill: false,
-            backgroundColor: chart_bymonth[i].sender[0].color,
-            borderColor: chart_bymonth[i].sender[0].color,
-            data: datas,
+            let labels = [];
+            let date = {
+                year: 2018,
+                month: 12
+            };
+            while (compare_date(next_date, date) != -1) {
+                labels.push(date.month + "/" + date.year);
+                date = add_one_date(date);
+            }
+            let data = {
+                labels: labels,
+                datasets: chart_dataset
+            };
+            window.myGlobal.data = data;
+            window.myGlobal.update();
         });
-    }
-    let labels = [];
-    let date = {
-        year: 2018,
-        month: 12
-    };
-    while (compare_date(next_date, date) != -1) {
-        labels.push(date.month + "/" + date.year);
-        date = add_one_date(date);
-    }
+}
+
+
+document.addEventListener('DOMContentLoaded', function () {
     let config = {
         type: 'line',
-        data: {
-            labels: labels,
-            datasets: chart_dataset
-        },
+        data: {},
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -100,9 +114,5 @@ function setUp_global() {
     };
     var ctx = document.getElementById('byMonth').getContext('2d');
     window.myGlobal = new Chart(ctx, config);
-}
-
-
-document.addEventListener('DOMContentLoaded', function() {
     setUp_global();
 }, false);

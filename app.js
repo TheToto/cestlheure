@@ -9,19 +9,26 @@ let app = express();
 let PORT = 1234;
 
 app.get('/', function (req, res) {
-    db_fetch.getData([db_fetch.getGlobalScore, db_fetch.getCurrentMonthScore, db_fetch.getScoreByMonth, db_fetch.getChartDataByMonth, db_fetch.getChartDataCurrentMonth]).then((arr) => {
+    db_fetch.getData([db_fetch.getGlobalScore, db_fetch.getScoreByMonth]).then((arr) => {
         res.render('index.twig', {
             global: arr[0],
-            month: arr[1],
-            bymonth: arr[2],
-            json_chart_bymonth: JSON.stringify(arr[3]),
-            json_chart_curmonth: JSON.stringify(arr[4])
+            bymonth: arr[1]
         });
     }).catch(res.send);
 }).get('/static/:name', function (req, res) {
     res.sendFile(req.params.name, {
         root: path.join(__dirname, 'static')
     });
+}).get('/graph/:year/:month', function (req, res) {
+    db_fetch.getData([(dbo) => {
+        return db_fetch.getChartDataMonth(dbo, parseInt(req.params.year), parseInt(req.params.month))
+    }]).then((arr) => {
+        res.json(arr[0]);
+    }).catch(res.send);
+}).get('/graph/global', function (req, res) {
+    db_fetch.getData([db_fetch.getChartDataByMonth]).then((arr) => {
+        res.json(arr[0]);
+    }).catch(res.send);
 });
 
 app.listen(PORT);
