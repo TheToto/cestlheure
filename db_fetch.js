@@ -156,7 +156,68 @@ async function getChartDataByMonth(dbo) {
             }
         }]).toArray((err, arr) => {
             if (err) return reject(err);
-            console.log(arr);
+            resolve(arr);
+        });
+    });
+}
+
+async function getChartDataCurrentMonth(dbo) {
+    let date = new Date();
+    let curMonth = new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0, 0);
+    let nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1, 0, 0, 0, 0);
+    return new Promise((resolve, reject) => {
+        dbo.collection("messages").aggregate([{
+            $match: {
+                'cestlheure': 1,
+                'timestamp': {
+                    $gte: curMonth,
+                    $lt: nextMonth
+                }
+            }
+        }, { // Group cestlheure by user and day
+            $group: {
+                _id: {
+                    sender: "$senderID",
+                    day: {
+                        $dayOfMonth: {
+                            date: "$timestamp",
+                            timezone: "+01"
+                        }
+                    }
+                },
+                count: {
+                    $sum: 1
+                }
+            }
+        }, {
+            $project: {
+                _id: "$_id.sender",
+                day: "$_id.day",
+                count: "$count"
+            }
+        }, {
+            $sort: {
+                day: 1
+            }
+        }, {
+            $group: {
+                _id: "$_id",
+                day: {
+                    $push: "$day"
+                },
+                count: {
+                    $push: "$count"
+                }
+            }
+        }, {
+            $lookup: {
+                from: "participants",
+                localField: "_id",
+                foreignField: "_id",
+                as: "sender"
+            }
+        }]).toArray((err, arr) => {
+            if (err) return reject(err);
             resolve(arr);
         });
     });
@@ -235,5 +296,6 @@ module.exports = {
     getMonthScore,
     getCurrentMonthScore,
     getScoreByMonth,
-    getChartDataByMonth
+    getChartDataByMonth,
+    getChartDataCurrentMonth
 };

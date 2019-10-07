@@ -9,12 +9,13 @@ let app = express();
 let PORT = 1234;
 
 app.get('/', function (req, res) {
-    db_fetch.getData([db_fetch.getGlobalScore, db_fetch.getCurrentMonthScore, db_fetch.getScoreByMonth, db_fetch.getChartDataByMonth]).then((arr) => {
+    db_fetch.getData([db_fetch.getGlobalScore, db_fetch.getCurrentMonthScore, db_fetch.getScoreByMonth, db_fetch.getChartDataByMonth, db_fetch.getChartDataCurrentMonth]).then((arr) => {
         res.render('index.twig', {
             global: arr[0],
             month: arr[1],
             bymonth: arr[2],
-            json_chart_bymonth: JSON.stringify(arr[3])
+            json_chart_bymonth: JSON.stringify(arr[3]),
+            json_chart_curmonth: JSON.stringify(arr[4])
         });
     }).catch(res.send);
 }).get('/static/:name', function (req, res) {
