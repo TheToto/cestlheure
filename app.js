@@ -33,7 +33,7 @@ app.get('/', function (req, res) {
 
 app.listen(PORT);
 console.log("App listening on port " + PORT);
-//fb.monitoring();
+fb.monitoring();
 //fb.dump_users().then(() => console.log("Dump user done"));
 /*fb.dump_thread().then(() => {
     console.log("Dump thread done");

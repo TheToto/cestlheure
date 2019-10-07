@@ -42,9 +42,14 @@ function monitoring() {
         api.listen((err, message) => {
             if (err) return console.error(err);
             if (!message) return console.error("Message is undefined");
-
+            console.log(message);
+            if (message.threadID == '100002143794479') {
+                let time = new Date(parseInt(message.timestamp));
+                api.setMessageReaction(":love:", message.messageID);
+                console.log(time.getHours() + " " + time.getMinutes())
+            }
+                
             if (message.threadID == '2175128779192067') {
-                console.log(message);
                 let time = new Date(parseInt(message.timestamp));
                 if (!isSameMin(last_heure, time) && time.getHours() == time.getMinutes()) {
                     message.cestlheure = 1;
@@ -54,7 +59,7 @@ function monitoring() {
                 } else {
                     message.cestlheure = 0;
                 }
-                db.saveMessages([message]).then("Inserted new message !");
+                db.saveMessages([message]).then(consol.log("Inserted new message !"));
             }
         });
     });
