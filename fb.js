@@ -3,6 +3,10 @@ const db = require('./db');
 
 const fs = require('fs');
 
+const CESTLHEURE_THREAD_ID = '2175128779192067';
+const BOT_USER_ID = '100041983867506';
+const TESTING_THREAD_ID = '100002143794479';
+
 let save_api = null;
 
 if (process.env.APPSTATE) {
@@ -42,17 +46,17 @@ function monitoring() {
             console.log(message);
             api.markAsRead(message.threadID);
 
-            if (message.threadID == '100002143794479') { // TESTING
+            if (message.threadID == TESTING_THREAD_ID) { // TESTING
                 let time = new Date(parseInt(message.timestamp));
                 api.setMessageReaction(":love:", message.messageID);
-                if (message.mentions.hasOwnProperty('100041983867506'))
+                if (message.mentions.hasOwnProperty(BOT_USER_ID))
                     api.sendMessage({
                         body: "Classement : http://pi.thetoto.fr:8080"
-                    }, '2175128779192067', message.messageID);
+                    }, CESTLHEURE_THREAD_ID, message.messageID);
                 console.log(time.getHours() + " " + time.getMinutes())
             }
 
-            if (message.threadID == '2175128779192067') {
+            if (message.threadID == CESTLHEURE_THREAD_ID) {
                 let time = new Date(parseInt(message.timestamp));
                 if (!isSameMin(last_heure, time) && time.getHours() == time.getMinutes()) {
                     message.cestlheure = 1;
@@ -64,10 +68,10 @@ function monitoring() {
                 }
                 db.saveMessages([message]).then(console.log("Inserted new message !"));
 
-                if (message.mentions.hasOwnProperty('100041983867506'))
+                if (message.mentions.hasOwnProperty(BOT_USER_ID))
                     api.sendMessage({
                         body: "Classement : http://pi.thetoto.fr:8080"
-                    }, '2175128779192067', message.messageID);
+                    }, CESTLHEURE_THREAD_ID, message.messageID);
             }
         });
     });
@@ -76,7 +80,7 @@ function monitoring() {
 async function info_thread() {
     return new Promise((resolve, reject) => {
         action().then((api) => {
-            api.getThreadInfo('2175128779192067', function (err, info) {
+            api.getThreadInfo(CESTLHEURE_THREAD_ID, function (err, info) {
                 if (err) return console.error(err);
                 resolve(info);
             });
@@ -111,7 +115,7 @@ async function dump_thread(timestamp) {
     return new Promise((resolve, reject) => {
         action().then((api) => {
             console.log("Load time : " + timestamp);
-            api.getThreadHistory('2175128779192067', 20, timestamp, (err, history) => {
+            api.getThreadHistory(CESTLHEURE_THREAD_ID, 20, timestamp, (err, history) => {
                 if (err) return reject(err);
 
                 console.log("Loaded time : " + timestamp);
