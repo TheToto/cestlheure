@@ -36,7 +36,7 @@ function setUp_cur() {
                 });
             }
             let labels = [];
-            for (let day = 1; day < new Date().monthDays() + 1; day++) {
+            for (let day = 1; day < new Date(year, month - 1, 1, 0, 0, 0, 0).monthDays() + 1; day++) {
                 labels.push(day);
             }
             var data = {
