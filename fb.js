@@ -38,13 +38,20 @@ function monitoring() {
         api.listen((err, message) => {
             if (err) return console.error(err);
             if (!message) return console.error("Message is undefined");
+
             console.log(message);
-            if (message.threadID == '100002143794479') {
+            api.markAsRead(message.threadID);
+
+            if (message.threadID == '100002143794479') { // TESTING
                 let time = new Date(parseInt(message.timestamp));
                 api.setMessageReaction(":love:", message.messageID);
+                if (message.mentions.hasOwnProperty('100041983867506'))
+                    api.sendMessage({
+                        body: "Classement : http://pi.thetoto.fr:8080"
+                    }, '2175128779192067', message.messageID);
                 console.log(time.getHours() + " " + time.getMinutes())
             }
-                
+
             if (message.threadID == '2175128779192067') {
                 let time = new Date(parseInt(message.timestamp));
                 if (!isSameMin(last_heure, time) && time.getHours() == time.getMinutes()) {
@@ -56,8 +63,12 @@ function monitoring() {
                     message.cestlheure = 0;
                 }
                 db.saveMessages([message]).then(console.log("Inserted new message !"));
+
+                if (message.mentions.hasOwnProperty('100041983867506'))
+                    api.sendMessage({
+                        body: "Classement : http://pi.thetoto.fr:8080"
+                    }, '2175128779192067', message.messageID);
             }
-            api.markAsRead(message.threadID);
         });
     });
 }
