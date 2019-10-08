@@ -13,10 +13,6 @@ async function action() {
     return new Promise((resolve, reject) => {
         if (save_api == null) {
             fb_login.connectAppState().then((api) => {
-                api.setOptions({
-                    selfListen: true,
-                    logLevel: "silent"
-                });
                 save_api = api;
                 resolve(api);
             }).catch(reject);
@@ -59,8 +55,9 @@ function monitoring() {
                 } else {
                     message.cestlheure = 0;
                 }
-                db.saveMessages([message]).then(consol.log("Inserted new message !"));
+                db.saveMessages([message]).then(console.log("Inserted new message !"));
             }
+            api.markAsRead(message.threadID);
         });
     });
 }
