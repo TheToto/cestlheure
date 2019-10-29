@@ -44,7 +44,7 @@ function setUp_cur() {
                 datasets: chart_dataset
             };
             window.myCur.data = data;
-            window.myCur.options.title.text = "Claasement " + month + "/" + year;
+            window.myCur.options.title.text = "Classement " + (month < 10 ? '0' + month : month) + "/" + year;
             window.myCur.update();
         });
 }
