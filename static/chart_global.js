@@ -3,6 +3,8 @@ const next_date = {
     month: new Date().getMonth() + 1
 }
 
+let fill_param = false;
+
 function compare_date(date1, date2) {
     if (date1.year > date2.year)
         return 1
@@ -22,6 +24,26 @@ function add_one_date(date) {
         date.year += 1;
     }
     return date;
+}
+
+function background_color(col) {
+    let amt = 95;
+    let usePound = false;
+    if (col[0] == "#") {
+        col = col.slice(1);
+        usePound = true;
+    }
+    let num = parseInt(col, 16);
+    let r = (num >> 16) + amt;
+    if (r > 255) r = 255;
+    else if (r < 0) r = 0;
+    let b = ((num >> 8) & 0x00FF) + amt;
+    if (b > 255) b = 255;
+    else if (b < 0) b = 0;
+    let g = (num & 0x0000FF) + amt;
+    if (g > 255) g = 255;
+    else if (g < 0) g = 0;
+    return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
 }
 
 function setUp_global() {
@@ -50,8 +72,8 @@ function setUp_global() {
                 }
                 chart_dataset.push({
                     label: chart_bymonth[i].sender[0].name,
-                    fill: false,
-                    backgroundColor: chart_bymonth[i].sender[0].color,
+                    fill: fill_param,
+                    backgroundColor: background_color(chart_bymonth[i].sender[0].color),
                     borderColor: chart_bymonth[i].sender[0].color,
                     data: datas,
                 });
@@ -62,7 +84,7 @@ function setUp_global() {
                 month: 12
             };
             while (compare_date(next_date, date) != -1) {
-                labels.push(date.month + "/" + date.year);
+                labels.push((date.month < 10 ? '0' + date.month : date.month) + "/" + date.year);
                 date = add_one_date(date);
             }
             let data = {
@@ -80,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
         type: 'line',
         data: {},
         options: {
+            fill: false,
             responsive: true,
             maintainAspectRatio: false,
             title: {
@@ -96,14 +119,13 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             scales: {
                 xAxes: [{
-                    display: true,
                     scaleLabel: {
                         display: true,
                         labelString: 'Mois'
                     }
                 }],
                 yAxes: [{
-                    display: true,
+                    stacked: false,
                     scaleLabel: {
                         display: true,
                         labelString: 'Points'
@@ -115,4 +137,15 @@ document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('byMonth').getContext('2d');
     window.myGlobal = new Chart(ctx, config);
     setUp_global();
+}, false);
+
+document.getElementById('switch_graph').addEventListener("click", function () {
+    document.getElementById('switch_graph').innerHTML = fill_param ? "Score par équipe" : "Score solo";
+    fill_param = !fill_param;
+    window.myGlobal.options.scales.yAxes[0].stacked = fill_param;
+    for (let i in window.myGlobal.data.datasets) {
+        window.myGlobal.data.datasets[i].fill = fill_param;
+        window.myGlobal.data.datasets[i].lineTension = fill_param ? false : undefined;
+    }
+    window.myGlobal.update();
 }, false);
