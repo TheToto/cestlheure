@@ -7,7 +7,7 @@ var year = new Date().getFullYear();
 var month = new Date().getMonth() + 1;
 
 function setUp_cur() {
-    fetch('/graph/' + year + "/" + month)
+    fetch('graph/' + year + "/" + month)
         .then(function (response) {
             return response.json();
         })

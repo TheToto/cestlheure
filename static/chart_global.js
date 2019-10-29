@@ -47,7 +47,7 @@ function background_color(col) {
 }
 
 function setUp_global() {
-    fetch('/graph/global')
+    fetch('graph/global')
         .then(function (response) {
             return response.json();
         })

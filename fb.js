@@ -55,7 +55,7 @@ function monitoring() {
 
                 if (message.mentions.hasOwnProperty(BOT_USER_ID))
                     api.sendMessage({
-                        body: "Classement : http://pi.thetoto.fr:8080"
+                        body: "Classement : https://pi.thetoto.fr/cestlheure"
                     }, CESTLHEURE_THREAD_ID, message.messageID);
             }
         });
