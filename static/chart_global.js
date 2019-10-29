@@ -143,6 +143,7 @@ document.getElementById('switch_graph').addEventListener("click", function () {
     document.getElementById('switch_graph').innerHTML = fill_param ? "Score par équipe" : "Score solo";
     fill_param = !fill_param;
     window.myGlobal.options.scales.yAxes[0].stacked = fill_param;
+    window.myGlobal.options.title.text = fill_param ? "Classement par mois (par équipe)" : "Classement par mois";
     for (let i in window.myGlobal.data.datasets) {
         window.myGlobal.data.datasets[i].fill = fill_param;
         window.myGlobal.data.datasets[i].lineTension = fill_param ? false : undefined;

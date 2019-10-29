@@ -24,20 +24,20 @@ app.get('/', function (req, res) {
     res.sendFile(req.params.name, {
         root: path.join(__dirname, 'static')
     });
-}).get('graph/:year/:month', function (req, res) {
+}).get('/graph/:year/:month', function (req, res) {
     db_fetch.getData([(dbo) => {
         return db_fetch.getChartDataMonth(dbo, parseInt(req.params.year), parseInt(req.params.month))
     }]).then((arr) => {
         res.json(arr[0]);
     }).catch(res.send);
-}).get('graph/global', function (req, res) {
+}).get('/graph/global', function (req, res) {
     db_fetch.getData([db_fetch.getChartDataByMonth]).then((arr) => {
         res.json(arr[0]);
     }).catch(res.send);
 });
 
-app.listen(process.env.PORT || PORT);
-console.log("App listening on port " + process.env.PORT || PORT);
+app.listen(PORT);
+console.log("App listening on port " + PORT);
 fb.monitoring();
 //fb.dump_users().then(() => console.log("Dump user done"));
 /*fb.dump_thread().then(() => {
