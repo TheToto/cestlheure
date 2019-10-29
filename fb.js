@@ -1,17 +1,12 @@
 const fb_login = require('./login');
 const db = require('./db');
-
-const fs = require('fs');
+const db_fetch = require('./db_fetch');
 
 const CESTLHEURE_THREAD_ID = '2175128779192067';
 const BOT_USER_ID = '100041983867506';
 const TESTING_THREAD_ID = '100002143794479';
 
 let save_api = null;
-
-if (process.env.APPSTATE) {
-    fs.writeFileSync("appstate.json", process.env.APPSTATE);
-}
 
 async function action() {
     return new Promise((resolve, reject) => {
@@ -121,9 +116,34 @@ async function dump_thread(timestamp) {
     });
 }
 
+async function sendMonthlyReport() {
+    let getPrevMonth = dbo => db_fetch.getMonthScore(dbo, new Date().getFullYear(), new Date().getMonth()); // getMonth = month - 1
+    db_fetch.getData([getPrevMonth]).then(results => {
+        let rapport = "";
+        let heure_total = 0;
+        results = results[0];
+        let mentions = [];
+        for (let i in results) {
+            rapport += `@${results[i].sender[0].name} : ${results[i].count}\n`;
+            mentions.push({
+                tag: `@${results[i].sender[0].name}`,
+                id: results[i].sender[0]._id
+            });
+            heure_total += results[i].count;
+        }
+        action().then(api => {
+            api.sendMessage({
+                body: `Félicitations ! Vous avez obtenu au total ${heure_total} "C'est L'heure" ce mois ci !\n\nRapport du mois :\n${rapport}`,
+                mentions: mentions
+            }, TESTING_THREAD_ID);
+        });
+    });
+}
+
 module.exports = {
     dump_users,
     info_thread,
     dump_thread,
-    monitoring
+    monitoring,
+    sendMonthlyReport
 }

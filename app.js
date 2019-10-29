@@ -1,3 +1,4 @@
+const CronJob = require('cron').CronJob;
 const express = require('express');
 const Twig = require('twig');
 const fb = require('./fb');
@@ -7,6 +8,10 @@ const path = require('path');
 
 let app = express();
 let PORT = 1234;
+
+new CronJob('30 0 0 1 * *', function() {
+  fb.sendMonthlyReport();
+}, null, true, 'Europe/Paris');
 
 app.get('/', function (req, res) {
     db_fetch.getData([db_fetch.getGlobalScore, db_fetch.getScoreByMonth]).then((arr) => {
