@@ -46,16 +46,6 @@ function monitoring() {
             console.log(message);
             api.markAsRead(message.threadID);
 
-            if (message.threadID == TESTING_THREAD_ID) { // TESTING
-                let time = new Date(parseInt(message.timestamp));
-                api.setMessageReaction(":love:", message.messageID);
-                if (message.mentions.hasOwnProperty(BOT_USER_ID))
-                    api.sendMessage({
-                        body: "Classement : http://pi.thetoto.fr:8080"
-                    }, CESTLHEURE_THREAD_ID, message.messageID);
-                console.log(time.getHours() + " " + time.getMinutes())
-            }
-
             if (message.threadID == CESTLHEURE_THREAD_ID) {
                 let time = new Date(parseInt(message.timestamp));
                 if (!isSameMin(last_heure, time) && time.getHours() == time.getMinutes()) {
