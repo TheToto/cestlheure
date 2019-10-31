@@ -117,7 +117,12 @@ async function dump_thread(timestamp) {
 }
 
 async function sendMonthlyReport() {
-    let getPrevMonth = dbo => db_fetch.getMonthScore(dbo, new Date().getFullYear(), new Date().getMonth()); // getMonth = month - 1
+    let month = new Date().getMonth(); // getMonth = month - 1
+    let year = new Date().getFullYear();
+    month = month == 0 ? 12 : month;
+    year = month == 12 ? year - 1 : year;
+
+    let getPrevMonth = dbo => db_fetch.getMonthScore(dbo, year, month); 
     db_fetch.getData([getPrevMonth]).then(results => {
         let rapport = "";
         let heure_total = 0;
@@ -133,7 +138,7 @@ async function sendMonthlyReport() {
         }
         action().then(api => {
             api.sendMessage({
-                body: `Félicitations ! Vous avez obtenu au total ${heure_total} "C'est L'heure" ce mois ci !\n\nRapport du mois :\n${rapport}`,
+                body: `Félicitations ! Vous avez obtenu au total ${heure_total} "C'est L'heure" ce mois ci !\n\nRapport du mois :\n${rapport}\n\nClassement détaillé : https://pi.thetoto.fr/cestlheure/?month=${month}&year=${year}`,
                 mentions: mentions
             }, CESTLHEURE_THREAD_ID);
         });
