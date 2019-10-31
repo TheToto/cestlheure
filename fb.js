@@ -55,7 +55,7 @@ function monitoring() {
 
                 if (message.mentions.hasOwnProperty(BOT_USER_ID))
                     api.sendMessage({
-                        body: "Classement : https://pi.thetoto.fr/cestlheure"
+                        body: "Classement : https://pi.thetoto.fr/cestlheure \nTon évolution : https://pi.thetoto.fr/cestlheure/user/" + message.senderID
                     }, CESTLHEURE_THREAD_ID, message.messageID);
             }
         });
