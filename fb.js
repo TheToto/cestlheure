@@ -135,7 +135,7 @@ async function sendMonthlyReport() {
             api.sendMessage({
                 body: `Félicitations ! Vous avez obtenu au total ${heure_total} "C'est L'heure" ce mois ci !\n\nRapport du mois :\n${rapport}`,
                 mentions: mentions
-            }, TESTING_THREAD_ID);
+            }, CESTLHEURE_THREAD_ID);
         });
     });
 }
