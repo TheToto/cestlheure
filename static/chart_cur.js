@@ -5,8 +5,8 @@ Date.prototype.monthDays = function () {
 
 const urlParams = new URLSearchParams(window.location.search);
 
-var year = urlParams.get("year") || new Date().getFullYear();
-var month = urlParams.get("month") || new Date().getMonth() + 1;
+var year = parseInt(urlParams.get("year")) || new Date().getFullYear();
+var month = parseInt(urlParams.get("month")) || new Date().getMonth() + 1;
 
 function setUp_cur() {
     fetch('graph/' + year + "/" + month)
