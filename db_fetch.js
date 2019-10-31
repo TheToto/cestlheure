@@ -46,13 +46,13 @@ async function getScoreByMonth(dbo) {
                     month: {
                         $month: {
                             date: "$timestamp",
-                            timezone: "+01"
+                            timezone: "Europe/Paris"
                         }
                     },
                     year: {
                         $year: {
                             date: "$timestamp",
-                            timezone: "+01"
+                            timezone: "Europe/Paris"
                         }
                     },
                 },
@@ -113,13 +113,13 @@ async function getChartDataByMonth(dbo) {
                     month: {
                         $month: {
                             date: "$timestamp",
-                            timezone: "+01"
+                            timezone: "Europe/Paris"
                         }
                     },
                     year: {
                         $year: {
                             date: "$timestamp",
-                            timezone: "+01"
+                            timezone: "Europe/Paris"
                         }
                     }
                 },
@@ -184,7 +184,7 @@ async function getChartDataMonth(dbo, year, month) {
                     day: {
                         $dayOfMonth: {
                             date: "$timestamp",
-                            timezone: "+01"
+                            timezone: "Europe/Paris"
                         }
                     }
                 },
@@ -275,7 +275,7 @@ async function getLastCestLheure(dbo) {
             $sort: {
                 timestamp: -1
             }
-        },{
+        }, {
             $limit: 1
         }, {
             $lookup: {
@@ -291,10 +291,83 @@ async function getLastCestLheure(dbo) {
     });
 }
 
+//
+async function getUserDetail(dbo, userID) {
+    return new Promise((resolve, reject) => {
+        dbo.collection("messages").aggregate([{
+            $match: {
+                'cestlheure': 1,
+                'senderID': userID
+            }
+        }, {
+            $group: {
+                _id: {
+                    sender: "$senderID",
+                    year: {
+                        $year: {
+                            date: "$timestamp",
+                            timezone: "Europe/Paris"
+                        }
+                    },
+                    month: {
+                        $month: {
+                            date: "$timestamp",
+                            timezone: "Europe/Paris"
+                        }
+                    },
+                    day: {
+                        $dayOfMonth: {
+                            date: "$timestamp",
+                            timezone: "Europe/Paris"
+                        }
+                    }
+                },
+                count: {
+                    $sum: 1
+                }
+            }
+        },{
+            $group: {
+                _id: {
+                    sender: "$_id.sender",
+                    month: "$_id.month",
+                    year: "$_id.year"
+                },
+                days: {
+                    $addToSet: {
+                        count: "$count",
+                        day: "$_id.day"
+                    }
+                }
+            }
+        }, {
+            $sort: {
+                "_id.year": 1,
+                "_id.month": 1
+            }
+        }]).toArray((err, arr) => {
+            if (err) return reject(err);
+            resolve(arr);
+        });
+    });
+}
+
 // Récupérer la liste des utilisateurs
 async function getUsers(dbo) {
     return new Promise((resolve, reject) => {
-        dbo.collection("partitipants").find().toArray((err, arr) => {
+        dbo.collection("participants").find().toArray((err, arr) => {
+            if (err) return reject(err);
+            resolve(arr);
+        });
+    });
+}
+
+// Récupérer le détail d'un utilisateur
+async function getUser(dbo, userid) {
+    return new Promise((resolve, reject) => {
+        dbo.collection("participants").find({
+            _id: userid
+        }).toArray((err, arr) => {
             if (err) return reject(err);
             resolve(arr);
         });
@@ -324,5 +397,7 @@ module.exports = {
     getScoreByMonth,
     getChartDataByMonth,
     getChartDataMonth,
-    getLastCestLheure
+    getLastCestLheure,
+    getUserDetail,
+    getUser
 };

@@ -21,10 +21,21 @@ app.get('/', function (req, res) {
             lastcestlheure: arr[2][0]
         });
     }).catch(res.send);
+}).get('/user/:userid', function (req, res) {
+    db_fetch.getData([(dbo) => db_fetch.getUser(dbo, req.params.userid)]).then((arr) => {
+        console.log(arr);
+        res.render('user.twig', {
+            user: arr[0][0]
+        });
+    }).catch(res.send);
 }).get('/static/:name', function (req, res) {
     res.sendFile(req.params.name, {
         root: path.join(__dirname, 'static')
     });
+}).get('/graph/user/:userid', function (req, res) {
+    db_fetch.getData([(dbo) => db_fetch.getUserDetail(dbo, req.params.userid)]).then((arr) => {
+        res.json(arr[0]);
+    }).catch(res.send);
 }).get('/graph/:year/:month', function (req, res) {
     db_fetch.getData([(dbo) => {
         return db_fetch.getChartDataMonth(dbo, parseInt(req.params.year), parseInt(req.params.month))
