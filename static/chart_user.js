@@ -12,12 +12,11 @@ function setUp_user() {
             for (let i in chart_user) {
                 let days = new Array(31).fill(0);
                 for (let j in chart_user[i].days) {
-                    days[chart_user[i].days[j].day] = chart_user[i].days[j].count;
+                    days[chart_user[i].days[j].day - 1] = chart_user[i].days[j].count;
                 }
 
                 let datas = [];
                 let counter = 0;
-                console.log(chart_user[i].days);
                 for (let day = 0; day < days.length; day++) {
                     
                     counter += days[day];
