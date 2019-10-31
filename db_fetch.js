@@ -1,5 +1,6 @@
 const db = require('./db');
 
+// Récupérer les scores totaux de tout les participants.
 async function getGlobalScore(dbo) {
     return new Promise((resolve, reject) => {
         dbo.collection("messages").aggregate([{
@@ -31,6 +32,7 @@ async function getGlobalScore(dbo) {
     });
 }
 
+// Récupérer le nombre d'étoile de tout les participants
 async function getScoreByMonth(dbo) {
     return new Promise((resolve, reject) => {
         dbo.collection("messages").aggregate([{
@@ -97,6 +99,7 @@ async function getScoreByMonth(dbo) {
     });
 }
 
+// Récupérer les scores de chacun de chaque mois
 async function getChartDataByMonth(dbo) {
     return new Promise((resolve, reject) => {
         dbo.collection("messages").aggregate([{
@@ -161,6 +164,7 @@ async function getChartDataByMonth(dbo) {
     });
 }
 
+// Récupérer les scores de chaque jour du mois spécifié
 async function getChartDataMonth(dbo, year, month) {
     let curMonth = new Date(year, month - 1, 1, 0, 0, 0, 0);
     let nextMonth = new Date(year, month, 1, 0, 0, 0, 0);
@@ -222,6 +226,7 @@ async function getChartDataMonth(dbo, year, month) {
     });
 }
 
+// Récupérer les scores totaux du mois spécifié
 async function getMonthScore(dbo, year, month) {
     let curMonth = new Date(year, month - 1, 1, 0, 0, 0, 0);
     let nextMonth = new Date(year, month, 1, 0, 0, 0, 0);
@@ -259,6 +264,34 @@ async function getMonthScore(dbo, year, month) {
     });
 }
 
+// Récupérer le dernier "C'est L'heure"
+async function getLastCestLheure(dbo) {
+    return new Promise((resolve, reject) => {
+        dbo.collection("messages").aggregate([{
+            $match: {
+                'cestlheure': 1,
+            }
+        }, {
+            $sort: {
+                timestamp: -1
+            }
+        },{
+            $limit: 1
+        }, {
+            $lookup: {
+                from: "participants",
+                localField: "senderID",
+                foreignField: "_id",
+                as: "sender"
+            }
+        }]).toArray((err, arr) => {
+            if (err) return reject(err);
+            resolve(arr);
+        });
+    });
+}
+
+// Récupérer la liste des utilisateurs
 async function getUsers(dbo) {
     return new Promise((resolve, reject) => {
         dbo.collection("partitipants").find().toArray((err, arr) => {
@@ -290,5 +323,6 @@ module.exports = {
     getMonthScore,
     getScoreByMonth,
     getChartDataByMonth,
-    getChartDataMonth
+    getChartDataMonth,
+    getLastCestLheure
 };
