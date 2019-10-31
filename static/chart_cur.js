@@ -20,7 +20,7 @@ function setUp_cur() {
                 let datas = [];
                 let counter = 0;
                 let index = 0;
-                for (let day = 1; day < new Date().monthDays() + 1; day++) {
+                for (let day = 1; day < 32; day++) {
                     if (chart_curmonth[i].day[index] && day == chart_curmonth[i].day[index]) {
                         counter += chart_curmonth[i].count[index];
                         index++;
