@@ -5,8 +5,11 @@
 <div class="media">
     <img src="{{ lastcestlheure.sender[0].thumbSrc }}" class="mr-3">
     <div class="media-body">
-        <h5 class="mt-0">{{ lastcestlheure.sender[0].name }} - {{ lastcestlheure.timestamp | date("m/d/Y H:i:s", "Europe/Paris") }}</h5>
-        {{ lastcestlheure.body }}
+        <h5 style="display: contents;" class="mt-0">{{ lastcestlheure.sender[0].name }}</h5>
+        <p style="display: contents;"> -
+            {{ lastcestlheure.timestamp | date("m/d/Y H:i:s", "Europe/Paris") }}.{{ lastcestlheure.timestamp | date("u", "Europe/Paris") | slice(0,3) }}
+        </p>
+        <p>{{ lastcestlheure.body }}</p>
     </div>
 </div>
 <hr>
