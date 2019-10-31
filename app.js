@@ -14,16 +14,16 @@ new CronJob('30 0 0 1 * *', function() {
 }, null, true, 'Europe/Paris');
 
 app.get('/', function (req, res) {
-    db_fetch.getData([db_fetch.getGlobalScore, db_fetch.getScoreByMonth, db_fetch.getLastCestLheure]).then((arr) => {
+    db_fetch.getData([db_fetch.getGlobalScore, db_fetch.getScoreByMonth, db_fetch.getLastCestLheure, db_fetch.getUsers]).then((arr) => {
         res.render('index.twig', {
             global: arr[0],
             bymonth: arr[1],
-            lastcestlheure: arr[2][0]
+            lastcestlheure: arr[2][0],
+            users: arr[3]
         });
     }).catch(res.send);
 }).get('/user/:userid', function (req, res) {
     db_fetch.getData([(dbo) => db_fetch.getUser(dbo, req.params.userid)]).then((arr) => {
-        console.log(arr);
         res.render('user.twig', {
             user: arr[0][0]
         });
