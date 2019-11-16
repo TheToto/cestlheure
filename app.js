@@ -12,6 +12,9 @@ let PORT = 1234;
 new CronJob('30 0 0 1 * *', function() {
     fb.sendMonthlyReport();
 }, null, true, 'Europe/Paris');
+new CronJob('0 30 0 * * *', function() {
+    process.exit(0);
+}, null, true, 'Europe/Paris');
 
 app.get('/', function (req, res) {
     db_fetch.getData([db_fetch.getGlobalScore, db_fetch.getScoreByMonth, db_fetch.getLastCestLheure, db_fetch.getUsers]).then((arr) => {
