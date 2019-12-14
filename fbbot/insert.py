@@ -5,7 +5,6 @@ from asgiref.sync import sync_to_async
 async def insert_message_object(message_object):
     def save():
         user = User.objects.get(uid=message_object.author)
-
         Message.objects.update_or_create(
             uid=message_object.uid, defaults={
                 "text": message_object.text,
@@ -13,7 +12,6 @@ async def insert_message_object(message_object):
                 "time": message_object.created_at
             }
         )
-        print("inserted")
 
     await sync_to_async(save)()
 

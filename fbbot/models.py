@@ -8,6 +8,7 @@ class User(models.Model):
     nickname = models.CharField(max_length=50, null=True)
     url = models.URLField(null=True)
     photo_url = models.URLField(null=True)
+    color = models.CharField(max_length=20, null=True)
 
     def __str__(self):
         return self.name
@@ -20,4 +21,5 @@ class Message(models.Model):
     time = models.DateTimeField()
 
     def __str__(self):
-        return f"{self.author.name} : {self.text[:15]}"
+        body = self.text[:15] if self.text else "None"
+        return f"{self.author.name} : {body}"
