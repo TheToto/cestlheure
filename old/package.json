@@ -1,0 +1,20 @@
+{
+    "name": "cestlheure",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "cron": "^1.7.2",
+        "dotenv": "^8.1.0",
+        "express": "^4.17.1",
+        "facebook-chat-api": "github:Schmavery/facebook-chat-api",
+        "mongodb": "^3.3.2",
+        "twig": "^1.13.3"
+    }
+}
