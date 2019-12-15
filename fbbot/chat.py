@@ -3,7 +3,7 @@ from fbchat import ThreadType
 import asyncio
 import os
 from pprint import pprint
-from .insert import insert_message_object, insert_user_object
+from .insert import insert_message_object, update_user_object
 
 
 class CestLheureBot(Client):
@@ -31,7 +31,7 @@ async def dump_users(client):
     users = await client.fetch_all_users_from_threads([infos[tid]])
     for user in users:
         print("Users :", user)
-        await insert_user_object(user)
+        await update_user_object(user)
 
 
 async def start(loop):
