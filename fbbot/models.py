@@ -23,3 +23,7 @@ class Message(models.Model):
     def __str__(self):
         body = self.text[:15] if self.text else "None"
         return f"{self.author.name} : {body}"
+
+    class Meta:
+        get_latest_by = "time"
+        ordering = ["-time"]

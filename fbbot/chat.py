@@ -3,7 +3,7 @@ from fbchat import ThreadType
 import asyncio
 import os
 from pprint import pprint
-from .insert import insert_message_object, update_user_object
+from .insert import insert_message_object, update_user_object, get_last_timestamp, insert_bulk_message_objects
 
 
 class CestLheureBot(Client):
@@ -21,8 +21,8 @@ class CestLheureBot(Client):
         if thread_id == os.environ["THREAD_ID_CESTLHEURE"]:
             await insert_message_object(message_object)
 
-        if author_id != self.uid:
-            await self.send(message_object, thread_id=thread_id, thread_type=thread_type)
+        # if author_id != self.uid:
+        #    await self.send(message_object, thread_id=thread_id, thread_type=thread_type)
 
 
 async def dump_users(client):
@@ -34,12 +34,34 @@ async def dump_users(client):
         await update_user_object(user)
 
 
+async def dump_thread(client):
+    tid = os.environ["THREAD_ID_CESTLHEURE"]
+    ts = None
+    to_save = []
+    latest_message_ts = await get_last_timestamp()
+    while ts is None or latest_message_ts is None or latest_message_ts < ts:
+        history = await client.fetch_thread_messages(tid, before=ts)
+        if history is None:
+            break
+        if ts is not None:
+            history.pop(0)
+        if len(history) == 0:
+            break
+        to_save.extend(history)
+        print(history)
+        ts = history[len(history) - 1].created_at
+
+    await insert_bulk_message_objects(to_save)
+    print("Finished")
+
+
 async def start(loop):
     client = CestLheureBot(loop=loop)
     print("Logging in...")
     await client.start("cestlheure@protonmail.com", "cestlheure12345")
     print("Logged")
     await dump_users(client)
+    await dump_thread(client)
     print("Listening...")
     client.listen()
 
