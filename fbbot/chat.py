@@ -2,6 +2,7 @@ from fbchat import Client
 from fbchat import ThreadType
 import asyncio
 import os
+import pickle5 as pickle
 from pprint import pprint
 from .insert import insert_message_object, update_user_object, get_last_timestamp, insert_bulk_message_objects
 
@@ -55,11 +56,28 @@ async def dump_thread(client):
     print("Finished")
 
 
+def save_appstate(session_cookies):
+    with open('appstate.bin', 'wb') as f:
+        pickle.dump(session_cookies, f)
+
+
+def get_appstate():
+    try:
+        with open('appstate.bin', 'rb') as fp:
+            return pickle.load(fp)
+    except:
+        return None
+
+
 async def start(loop):
     client = CestLheureBot(loop=loop)
+
     print("Logging in...")
-    await client.start("cestlheure@protonmail.com", "cestlheure12345")
+    appstate = get_appstate()
+    await client.start(os.environ["BOT_LOGIN"], os.environ["BOT_PASSWORD"], session_cookies=appstate)
+    save_appstate(client.get_session())
     print("Logged")
+
     await dump_users(client)
     await dump_thread(client)
     print("Listening...")
