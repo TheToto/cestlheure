@@ -16,11 +16,12 @@ def listen_message(instance=None, manual=False, **kwargs):
         if not manual and time.second >= 55:
             send_emote.send(message=instance, reaction=MessageReaction.SAD)
     if time.hour == time.minute:
-        print("C'est L'heure !")
         exact_time = time.replace(second=0, microsecond=0)
-        CestLheure.objects.create(message=instance, exact_date=exact_time)
-        if not manual:
-            send_emote.send(None, message=instance, reaction=MessageReaction.HEART)
+        if CestLheure.objects.latest().exact_time != exact_time:
+            print("C'est L'heure !")
+            CestLheure.objects.create(message=instance, exact_date=exact_time)
+            if not manual:
+                send_emote.send(None, message=instance, reaction=MessageReaction.HEART)
 
     if not manual:
         update_index(instance)
