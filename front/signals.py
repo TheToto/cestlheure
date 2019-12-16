@@ -15,7 +15,7 @@ def listen_message(instance=None, manual=False, **kwargs):
         # One minute before...
         if not manual and time.second >= 55:
             send_emote.send(message=instance, reaction=MessageReaction.SAD)
-    if time.hour == time.minute or True:
+    if time.hour == time.minute:
         print("C'est L'heure !")
         exact_time = time.replace(second=0, microsecond=0)
         CestLheure.objects.create(message=instance, exact_date=exact_time)
