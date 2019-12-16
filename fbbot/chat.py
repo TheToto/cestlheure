@@ -16,9 +16,6 @@ class CestLheureBot(Client):
         pprint(message_object)
         print(thread_id)
 
-        if thread_id == "2175128779192067":
-            return
-
         if thread_id == os.environ["THREAD_ID_CESTLHEURE"]:
             await insert_message_object(message_object)
 
