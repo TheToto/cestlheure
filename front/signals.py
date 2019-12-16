@@ -1,6 +1,10 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from fbchat import MessageReaction
+
 from fbbot.models import Message
+from fbbot.signals import send_emote
+
 from .models import CestLheure, CestLheureIndex
 
 
@@ -10,16 +14,13 @@ def listen_message(instance=None, manual=False, **kwargs):
     if time.hour == (time.minute + 1 % 60):
         # One minute before...
         if not manual and time.second >= 55:
-            # Send sad react if near C'est L'heure
-            pass
-        pass
-    if time.hour == time.minute:
-        # C'est L'heure !
+            send_emote.send(message=instance, reaction=MessageReaction.SAD)
+    if time.hour == time.minute or True:
+        print("C'est L'heure !")
         exact_time = time.replace(second=0, microsecond=0)
         CestLheure.objects.create(message=instance, exact_date=exact_time)
         if not manual:
-            # Send emote
-            pass
+            send_emote.send(None, message=instance, reaction=MessageReaction.HEART)
 
     if not manual:
         update_index(instance)
@@ -27,7 +28,7 @@ def listen_message(instance=None, manual=False, **kwargs):
 
 def update_index(new_message):
     index = CestLheureIndex.objects.first()
-    print("new ts", new_message.time)
+    print("New Index: ", new_message.time)
     if index is None:
         CestLheureIndex.objects.create(last_listened=new_message)
     else:

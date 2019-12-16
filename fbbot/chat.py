@@ -1,15 +1,17 @@
-from fbchat import Client
-from fbchat import ThreadType
 import asyncio
 import os
 import pickle5 as pickle
 from pprint import pprint
+
+from fbchat import Client
+
 from .insert import insert_message_object, update_user_object, get_last_timestamp, insert_bulk_message_objects
+from .signals import setup_signals
 
 
 class CestLheureBot(Client):
     async def on_message(self, mid=None, author_id=None, message_object=None, thread_id=None,
-                         thread_type=ThreadType.USER, at=None, metadata=None, msg=None):
+                         thread_type=None, at=None, metadata=None, msg=None):
         await self.mark_as_delivered(thread_id, message_object.uid)
         await self.mark_as_read(thread_id)
 
@@ -78,6 +80,8 @@ async def start(loop):
     await dump_users(client)
     await dump_thread(client)
     print("Listening...")
+
+    setup_signals(client)
     client.listen()
 
 
