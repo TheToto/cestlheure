@@ -11,10 +11,10 @@ from .models import CestLheure, CestLheureIndex
 @receiver(post_save, sender=Message)
 def listen_message(instance=None, manual=False, **kwargs):
     time = instance.time.astimezone()
-    if time.hour == (time.minute + 1 % 60):
+    if time.hour == (time.minute + 1) % 60:
         # One minute before...
         if not manual and time.second >= 55:
-            send_emote.send(message=instance, reaction=MessageReaction.SAD)
+            send_emote.send(None, message=instance, reaction=MessageReaction.SAD)
     if time.hour == time.minute:
         exact_date = time.replace(second=0, microsecond=0)
         if not CestLheure.objects.all().exists() or CestLheure.objects.latest().exact_date != exact_date:
