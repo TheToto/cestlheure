@@ -38,7 +38,7 @@ function monitoring() {
             if (err) return console.error(err);
             if (!message) return console.error("Message is undefined");
 
-	    if (message.type != "message")
+	    if (message.type != "message" && message.type != "message_reply")
 		return;
             console.log(message);
             api.markAsRead(message.threadID);
