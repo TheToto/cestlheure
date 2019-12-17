@@ -34,10 +34,12 @@ function monitoring() {
     let last_heure = new Date(1970, 0, 1, 0, 0, 0, 0);
     action().then((api) => {
         console.log("Start monitoring !");
-        api.listen((err, message) => {
+        api.listenMqtt((err, message) => {
             if (err) return console.error(err);
             if (!message) return console.error("Message is undefined");
 
+	    if (message.type != "message")
+		return;
             console.log(message);
             api.markAsRead(message.threadID);
 
@@ -47,7 +49,7 @@ function monitoring() {
                     message.cestlheure = 1;
                     last_heure = time;
                     console.log("C'est l'heure !!");
-                    api.setMessageReaction(":love:", message.messageID);
+                    //api.setMessageReaction(":love:", message.messageID);
                 } else {
                     message.cestlheure = 0;
                 }
@@ -55,11 +57,11 @@ function monitoring() {
 
                 if (message.mentions.hasOwnProperty(BOT_USER_ID))
                     api.sendMessage({
-                        body: "Classement : https://pi.thetoto.fr/cestlheure \nTon évolution : https://pi.thetoto.fr/cestlheure/user/" + message.senderID
+                        body: "Classement : https://tinyurl.com/bot-cestlheure/ \nTon évolution : https://tinyurl.com/bot-cestlheure/user/" + message.senderID
                     }, CESTLHEURE_THREAD_ID, message.messageID);
             }
         });
-    });
+    }).catch((err) => { console.log(err); monitoring(); });
 }
 
 async function info_thread() {
@@ -138,7 +140,7 @@ async function sendMonthlyReport() {
         }
         action().then(api => {
             api.sendMessage({
-                body: `Félicitations ! Vous avez obtenu au total ${heure_total} "C'est L'heure" ce mois ci !\n\nRapport du mois :\n${rapport}\n\nClassement détaillé : https://pi.thetoto.fr/cestlheure/?month=${month}&year=${year}`,
+                body: `Félicitations ! Vous avez obtenu au total ${heure_total} "C'est L'heure" ce mois ci !\n\nRapport du mois :\n${rapport}\n\nClassement détaillé : https://tinyurl.com/bot-cestlheure/?month=${month}&year=${year}`,
                 mentions: mentions
             }, CESTLHEURE_THREAD_ID);
         });
