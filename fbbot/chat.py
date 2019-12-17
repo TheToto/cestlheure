@@ -3,6 +3,7 @@ import os
 import pickle5 as pickle
 from pprint import pprint
 
+import pyotp
 from fbchat import Client
 
 from .insert import insert_message_object, update_user_object, get_last_timestamp, insert_bulk_message_objects
@@ -10,6 +11,9 @@ from .signals import setup_signals
 
 
 class CestLheureBot(Client):
+    async def on_2fa_code(self):
+        return pyotp.TOTP(os.environ['BOT_TOTP']).now()
+
     async def on_message(self, mid=None, author_id=None, message_object=None, thread_id=None,
                          thread_type=None, at=None, metadata=None, msg=None):
         await self.mark_as_delivered(thread_id, message_object.uid)
