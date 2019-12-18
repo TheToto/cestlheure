@@ -78,8 +78,12 @@ WSGI_APPLICATION = 'cestlheure.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'db_cestlheure',
+        'USER': 'cestlheure',
+        'PASSWORD': '1234cestlheure1234',
+        'HOST': '192.168.1.31',
+        'PORT': '5432',
     }
 }
 

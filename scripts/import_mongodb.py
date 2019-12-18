@@ -9,11 +9,18 @@ from fbbot.models import User, Message
 def fetch_messages(mydb):
     mycol = mydb["messages"]
     mydoc = mycol.find().sort("timestamp", -1)
+    users = list(User.objects.all())
     messages = []
     for x in mydoc:
-        user, _ = User.objects.get_or_create(uid=x["senderID"], defaults={
-            "name": x["senderID"],
-        })
+        user = None
+        for u in users:
+            if u.uid == x["senderID"]:
+                user = u
+                break
+        if user is None:
+            user, _ = User.objects.get_or_create(uid=x["senderID"], defaults={
+                "name": x["senderID"],
+            })
         dt = x["timestamp"].replace(tzinfo=datetime.timezone.utc)
         print(dt)
         messages.append(Message(
