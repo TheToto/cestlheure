@@ -6,4 +6,4 @@ django-extensions==2.2.5
 pickle5==0.0.9
 pyotp==2.3.0
 psycopg2-binary==2.8.4
-
+python-dateutil=2.8.1
