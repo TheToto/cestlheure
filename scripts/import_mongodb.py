@@ -18,7 +18,7 @@ def fetch_messages(mydb):
                 user = u
                 break
         if user is None:
-            user, _ = User.objects.get_or_create(uid=x["senderID"], defaults={
+            user, _ = User.objects.get_or_create(uid=int(x["senderID"]), defaults={
                 "name": x["senderID"],
             })
         dt = x["timestamp"].replace(tzinfo=datetime.timezone.utc)

@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')j8z4de)9g$-qknun8ydsz)+no9%9@u(n*xa(#$#!=sq4#4wn)'
+SECRET_KEY = os.environ["DJANGO_SECRET"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -79,11 +79,11 @@ WSGI_APPLICATION = 'cestlheure.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'db_cestlheure',
-        'USER': 'cestlheure',
-        'PASSWORD': '1234cestlheure1234',
-        'HOST': '192.168.1.31',
-        'PORT': '5432',
+        'NAME': os.environ["DB_NAME"],
+        'USER': os.environ["DB_USER"],
+        'PASSWORD': os.environ["DB_PASSWORD"],
+        'HOST': os.environ["DB_HOST"],
+        'PORT': os.environ["DB_PORT"],
     }
 }
 
