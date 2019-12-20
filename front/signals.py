@@ -1,5 +1,6 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.db import transaction
 from fbchat import MessageReaction
 
 from fbbot.models import Message
@@ -17,24 +18,27 @@ def listen_message(instance=None, manual=False, no_db=False, last_cestlheure=Non
             send_emote.send(None, message=instance, reaction=MessageReaction.SAD)
     if time.hour == time.minute:
         exact_date = time.replace(second=0, microsecond=0)
-        if not no_db:
-            last_cestlheure = CestLheure.objects.latest() if CestLheure.objects.all().exists() else None
-        if last_cestlheure is None or last_cestlheure.exact_date != exact_date:
-            print("C'est L'heure !")
-            cestlheure = CestLheure.build_obj(instance)
-            if no_db:
-                return cestlheure
-            cestlheure.save()
-            if not manual:
-                send_emote.send(None, message=instance, reaction=MessageReaction.HEART)
-        elif last_cestlheure.message.time > time:
-            print("New C'est L'heure !")
-            # Changement ! Un problème d'ordre a eu lieu...
-            if not manual:
-                send_emote.send(None, message=last_cestlheure.message, reaction=None)
-                send_emote.send(None, message=instance, reaction=MessageReaction.HEART)
-            last_cestlheure.message = instance
-            last_cestlheure.save()
+        # Prevent thread concurrency
+        with transaction.atomic():
+            if not no_db:
+                last_cestlheure = CestLheure.objects.select_for_update().latest() if CestLheure.objects.all().exists() else None
+            # If it's a new CestLheure
+            if last_cestlheure is None or last_cestlheure.exact_date != exact_date:
+                print("C'est L'heure !")
+                cestlheure = CestLheure.build_obj(instance)
+                if no_db:
+                    return cestlheure
+                cestlheure.save()
+                if not manual:
+                    send_emote.send(None, message=instance, reaction=MessageReaction.HEART)
+            # If it's the same hour, but earlier...
+            elif time < last_cestlheure.message.time:
+                print("New C'est L'heure !")
+                last_cestlheure.message = instance
+                last_cestlheure.save()
+                if not manual:
+                    send_emote.send(None, message=last_cestlheure.message, reaction=None)
+                    send_emote.send(None, message=instance, reaction=MessageReaction.HEART)
 
     if not manual:
         update_index(instance)
