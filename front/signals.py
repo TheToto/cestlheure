@@ -34,10 +34,11 @@ def listen_message(instance=None, manual=False, no_db=False, last_cestlheure=Non
             # If it's the same hour, but earlier...
             elif time < last_cestlheure.message.time:
                 print("New C'est L'heure !")
+                old_message = last_cestlheure.message
                 last_cestlheure.message = instance
                 last_cestlheure.save()
                 if not manual:
-                    send_emote.send(None, message=last_cestlheure.message, reaction=None)
+                    send_emote.send(None, message=old_message, reaction=None)
                     send_emote.send(None, message=instance, reaction=MessageReaction.HEART)
 
     if not manual:
