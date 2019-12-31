@@ -1,7 +1,9 @@
 import pymongo
 import os
 import datetime
+import json
 
+from fbbot.insert import MessageEncoder
 from fbbot.models import User, Message
 
 
@@ -27,7 +29,8 @@ def fetch_messages(mydb):
             text=x.get("body", None),
             author=user,
             time=dt,
-            full_object=x
+            # TODO: Adapt to fbchat format
+            full_object=json.loads(MessageEncoder().encode(x))
         )
         )
     print("Bulk messsage insert...")

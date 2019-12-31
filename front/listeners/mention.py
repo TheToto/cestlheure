@@ -8,10 +8,13 @@ from fbchat import Message
 
 class MentionListener(GenericListener):
     def valid_cond(self):
-        if "mentions" in self.message.full_object:
-            for i in self.message.full_object["mentions"]:
-                if i["thread_id"] == os.environ["THREAD_ID_BOT"]:
-                    return True
+        try:
+            if "mentions" in self.message.full_object:
+                for i in self.message.full_object["mentions"]:
+                    if i["thread_id"] == os.environ["THREAD_ID_BOT"]:
+                        return True
+        except Exception:
+            pass
         return False
 
     def first_cond(self):
