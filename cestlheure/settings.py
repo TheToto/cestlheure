@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "django_rq",
     'fbbot',
     'front',
     'django_extensions'
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -52,6 +54,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = "static/"
 
 ROOT_URLCONF = 'cestlheure.urls'
 
@@ -109,3 +114,31 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/rewrite/static/'
+
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
+redis_port = 6379
+REDIS_URL = 'redis://%s:%d/0' % (redis_host, redis_port)
+
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': REDIS_URL
+    },
+}
+
+RQ_QUEUES = {
+    'default': {
+        'URL': REDIS_URL,
+        'DEFAULT_TIMEOUT': -1,
+    },
+    'bot': {
+        'URL': REDIS_URL,
+        'DEFAULT_TIMEOUT': -1,
+    },
+    'other': {
+        'URL': REDIS_URL,
+        # 'ASYNC': False,
+    },
+}
+
+RQ_SHOW_ADMIN_LINK = False

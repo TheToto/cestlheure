@@ -1,5 +1,4 @@
 import os
-from threading import Thread
 from django.apps import AppConfig
 
 
@@ -8,9 +7,8 @@ class FbbotConfig(AppConfig):
 
     def ready(self):
         if os.environ.get('ENABLE_BOT', None) == 'true':
-            from .chat import launch_bot
-            t = Thread(target=launch_bot)
-            print(t)
-            t.daemon = True
-            t.start()
-            print("Bot Launched !")
+            import django_rq
+            django_rq.get_queue('bot').empty()
+            from .jobs import bot_job
+            bot_job.delay()
+            print("Launch bot job")
