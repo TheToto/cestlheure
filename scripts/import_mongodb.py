@@ -26,7 +26,9 @@ def fetch_messages(mydb):
             uid=x['_id'],
             text=x.get("body", None),
             author=user,
-            time=dt)
+            time=dt,
+            full_object=x
+        )
         )
     print("Bulk messsage insert...")
     Message.objects.bulk_create(messages, ignore_conflicts=True)

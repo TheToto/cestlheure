@@ -1,4 +1,4 @@
-from .specific_hour import GenericListener
+from .generic import GenericListener
 
 from fbchat import MessageReaction
 

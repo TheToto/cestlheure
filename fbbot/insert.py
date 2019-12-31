@@ -1,6 +1,19 @@
 from asgiref.sync import sync_to_async
+from django.core.serializers.json import DjangoJSONEncoder
+import json
 
 from .models import Message, User
+
+
+class MessageEncoder(DjangoJSONEncoder):
+    def default(self, o):
+        if hasattr(o, '__dict__'):
+            return o.__dict__
+        else:
+            try:
+                return super(MessageEncoder, self).default(o)
+            except Exception:
+                return str(o)
 
 
 def message_object_to_model(message_object, user_id):
@@ -11,7 +24,8 @@ def message_object_to_model(message_object, user_id):
         uid=message_object.uid,
         text=message_object.text,
         author=user,
-        time=message_object.created_at
+        time=message_object.created_at,
+        full_object=json.loads(MessageEncoder().encode(message_object))
     )
 
 

@@ -3,7 +3,7 @@ import os
 import pickle5 as pickle
 
 import pyotp
-from fbchat import Client
+from fbchat import Client, ThreadType
 from django_rq import job
 
 from .insert import insert_message_object, update_user_object, get_last_timestamp, insert_bulk_message_objects
@@ -22,9 +22,8 @@ class CestLheureBot(Client):
 
         if thread_id == os.environ["THREAD_ID_CESTLHEURE"]:
             message = await insert_message_object(message_object)
-            print(message)
-            print(self)
-            listen_job = listen_message.delay(message=message, use_bot=True)
+
+            listen_job = listen_message.delay(message=message)
 
             # Wait max 3s for result ...
             for i in range(0, 20):
@@ -35,7 +34,10 @@ class CestLheureBot(Client):
             print(listen_job.result)
             if listen_job.result is not None:
                 for i in listen_job.result:
-                    await self.react_to_message(i['message_uid'], i['react'])
+                    if 'react' in i:
+                        await self.react_to_message(i['message_uid'], i['react'])
+                    elif 'send' in i:
+                        await self.send(i['send'], thread_id, ThreadType.GROUP)
 
 
 async def dump_users(client):
@@ -96,6 +98,7 @@ async def start(loop):
     await dump_thread(client)
     print("Listening...")
 
+    print("Bot uid : ", client.uid)
     client.listen(markAlive=True)
 
 

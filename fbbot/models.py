@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.postgres.fields import JSONField
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 class User(models.Model):
@@ -18,6 +20,7 @@ class Message(models.Model):
     text = models.TextField(null=True)
     author = models.ForeignKey('User', on_delete=models.DO_NOTHING)
     time = models.DateTimeField()
+    full_object = JSONField(null=True)
 
     def __str__(self):
         body = self.text[:15] if self.text else "None"

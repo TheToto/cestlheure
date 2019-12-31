@@ -1,6 +1,7 @@
-from .specific_hour import GenericListener
-
 from fbchat import MessageReaction
+
+from .generic import GenericListener
+from ..models import CestLheure
 
 
 class CestLheureListener(GenericListener):

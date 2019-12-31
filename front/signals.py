@@ -5,6 +5,7 @@ from fbbot.models import Message
 
 from .listeners.cestlheure import CestLheureListener
 from .listeners.debug import DebugListener
+from .listeners.mention import MentionListener
 
 from .models import CestLheure, CestLheureIndex
 
@@ -14,6 +15,7 @@ def listen_message(message):
     res = []
 
     res += CestLheureListener(message).result
+    res += MentionListener(message).result
     if os.environ.get('DEBUG', "false") == "true":
         res += DebugListener(message).result
 
