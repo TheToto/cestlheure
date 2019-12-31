@@ -1,7 +1,5 @@
 from asgiref.sync import sync_to_async
 
-from front.signals import listen_missed
-
 from .models import Message, User
 
 
@@ -19,9 +17,11 @@ def message_object_to_model(message_object, user_id):
 
 async def insert_message_object(message_object):
     def save():
-        message_object_to_model(message_object, message_object.author).save()
+        message = message_object_to_model(message_object, message_object.author)
+        message.save()
+        return message
 
-    await sync_to_async(save)()
+    return await sync_to_async(save)()
 
 
 async def insert_bulk_message_objects(message_objects):
@@ -30,7 +30,6 @@ async def insert_bulk_message_objects(message_objects):
         for message_object in message_objects:
             models.append(message_object_to_model(message_object, message_object.author))
         Message.objects.bulk_create(models, ignore_conflicts=True)
-        listen_missed()
 
     await sync_to_async(save)()
 

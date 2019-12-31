@@ -1,48 +1,24 @@
-from django.dispatch import receiver
-from django.db.models.signals import post_save
-from django.db import transaction
-from fbchat import MessageReaction
+import os
+from django_rq import job
 
 from fbbot.models import Message
-from fbbot.signals import send_emote
+
+from .listeners.cestlheure import CestLheureListener
+from .listeners.debug import DebugListener
 
 from .models import CestLheure, CestLheureIndex
 
 
-@receiver(post_save, sender=Message)
-def listen_message(instance=None, manual=False, no_db=False, last_cestlheure=None, **kwargs):
-    time = instance.time.astimezone()
-    if time.hour == (time.minute + 1) % 60:
-        # One minute before...
-        if not manual and time.second >= 55:
-            send_emote.send(None, message=instance, reaction=MessageReaction.SAD)
-    if time.hour == time.minute:
-        exact_date = time.replace(second=0, microsecond=0)
-        # Prevent thread concurrency
-        with transaction.atomic():
-            if not no_db:
-                last_cestlheure = CestLheure.objects.select_for_update().latest() if CestLheure.objects.all().exists() else None
-            # If it's a new CestLheure
-            if last_cestlheure is None or last_cestlheure.exact_date != exact_date:
-                print("C'est L'heure !")
-                cestlheure = CestLheure.build_obj(instance)
-                if no_db:
-                    return cestlheure
-                cestlheure.save()
-                if not manual:
-                    send_emote.send(None, message=instance, reaction=MessageReaction.HEART)
-            # If it's the same hour, but earlier...
-            elif time < last_cestlheure.message.time:
-                print("New C'est L'heure !")
-                old_message = last_cestlheure.message
-                last_cestlheure.message = instance
-                last_cestlheure.save()
-                if not manual:
-                    send_emote.send(None, message=old_message, reaction=None)
-                    send_emote.send(None, message=instance, reaction=MessageReaction.HEART)
+@job('listen')
+def listen_message(message):
+    res = []
 
-    if not manual:
-        update_index(instance)
+    res += CestLheureListener(message).result
+    if os.environ.get('DEBUG', "false") == "true":
+        res += DebugListener(message).result
+
+    update_index(message)
+    return res
 
 
 def update_index(new_message):
@@ -50,35 +26,32 @@ def update_index(new_message):
     print("New Index: ", new_message.time)
     if index is None:
         CestLheureIndex.objects.create(last_listened=new_message)
+    elif index.last_listened.time > new_message.time:
+        print("ERROR !! Need re-listening")
     else:
         index.last_listened = new_message
         index.save()
 
 
-def listen_missed():
+@job('listen')
+def listen_missed(use_queue=False):
     index = CestLheureIndex.objects.first()
-    missed = []
+
     if index is not None:
         last_ts = index.last_listened.time
         to_listen = Message.objects.filter(time__gt=last_ts).order_by('time')
     else:
         to_listen = Message.objects.all().order_by('time')
+
     for message in to_listen:
         print("Listen : ", message.time)
-        cestlheure = listen_message(instance=message, manual=True, no_db=True,
-                                    last_cestlheure=missed[-1] if len(missed) else None)
-        if cestlheure:
-            missed.append(cestlheure)
-    if len(to_listen) > 0:
-        update_index(to_listen[len(to_listen) - 1])
-    CestLheure.objects.bulk_create(missed, ignore_conflicts=True)
+        if use_queue:
+            listen_message.delay(message=message)
+        else:
+            listen_message(message)
 
 
 def listen_all():
     CestLheure.objects.all().delete()
     CestLheureIndex.objects.all().delete()
-    listen_missed()
-
-
-def do_nothing():
-    pass
+    listen_missed.delay()

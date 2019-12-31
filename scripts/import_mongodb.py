@@ -2,7 +2,6 @@ import pymongo
 import os
 import datetime
 
-from front.signals import listen_missed
 from fbbot.models import User, Message
 
 
@@ -31,7 +30,6 @@ def fetch_messages(mydb):
         )
     print("Bulk messsage insert...")
     Message.objects.bulk_create(messages, ignore_conflicts=True)
-    listen_missed()
 
 
 def fetch_users(mydb):

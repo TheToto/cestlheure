@@ -1,13 +1,14 @@
 import asyncio
 import os
 import pickle5 as pickle
-from pprint import pprint
 
 import pyotp
 from fbchat import Client
+from django_rq import job
 
 from .insert import insert_message_object, update_user_object, get_last_timestamp, insert_bulk_message_objects
-from .signals import setup_signals
+
+from front.signals import listen_message, listen_missed
 
 
 class CestLheureBot(Client):
@@ -19,14 +20,22 @@ class CestLheureBot(Client):
         await self.mark_as_delivered(thread_id, message_object.uid)
         await self.mark_as_read(thread_id)
 
-        pprint(message_object)
-        print(thread_id)
-
         if thread_id == os.environ["THREAD_ID_CESTLHEURE"]:
-            await insert_message_object(message_object)
+            message = await insert_message_object(message_object)
+            print(message)
+            print(self)
+            listen_job = listen_message.delay(message=message, use_bot=True)
 
-        # if author_id != self.uid:
-        #    await self.send(message_object, thread_id=thread_id, thread_type=thread_type)
+            # Wait max 3s for result ...
+            for i in range(0, 20):
+                await asyncio.sleep(0.3)
+                if listen_job.result is not None:
+                    break
+
+            print(listen_job.result)
+            if listen_job.result is not None:
+                for i in listen_job.result:
+                    await self.react_to_message(i['message_uid'], i['react'])
 
 
 async def dump_users(client):
@@ -34,7 +43,7 @@ async def dump_users(client):
     infos = await client.fetch_thread_info(tid)
     users = await client.fetch_all_users_from_threads([infos[tid]])
     for user in users:
-        print("Users :", user)
+        print("Users :", user.name)
         await update_user_object(user)
 
 
@@ -52,10 +61,12 @@ async def dump_thread(client):
         if len(history) == 0:
             break
         to_save.extend(history)
-        print(history)
+        print(history[0].created_at)
         ts = history[len(history) - 1].created_at
 
     await insert_bulk_message_objects(to_save)
+    listen_missed.delay()
+
     print("Finished")
 
 
@@ -85,10 +96,10 @@ async def start(loop):
     await dump_thread(client)
     print("Listening...")
 
-    setup_signals(client)
-    client.listen()
+    client.listen(markAlive=True)
 
 
+@job('bot')
 def launch_bot():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)

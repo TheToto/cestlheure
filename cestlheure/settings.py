@@ -135,8 +135,9 @@ RQ_QUEUES = {
         'URL': REDIS_URL,
         'DEFAULT_TIMEOUT': -1,
     },
-    'other': {
+    'listen': {
         'URL': REDIS_URL,
+        'DEFAULT_TIMEOUT': -1,
         # 'ASYNC': False,
     },
 }
