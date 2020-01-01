@@ -63,6 +63,8 @@ def get_query_by_month():
 
 
 def color_variant(hex, factor=0.5):
+    if hex is None:
+        return "#000000"
     (r, g, b) = tuple(int(hex.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))
     r = 255 - (255 - r) * (1 - factor)
     g = 255 - (255 - g) * (1 - factor)

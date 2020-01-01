@@ -4,7 +4,7 @@ import rq
 from rq.registry import StartedJobRegistry
 
 
-def run():
+def run(*args):
     print("Empty queues")
 
     django_rq.get_queue('bot').empty()
@@ -24,6 +24,9 @@ def run():
             print("Send kill : ", current_job)
             current_job.meta['kill'] = "true"
             current_job.save_meta()
+
+    if args and len(args) > 0 and args[0] == "stop":
+        return
 
     print("Launch bot job")
     print(launch_bot.delay())

@@ -7,6 +7,8 @@ from fbchat import Message
 def get_running_job():
     registry = StartedJobRegistry('bot', connection=django_rq.get_connection('bot'))
     running_ids = registry.get_job_ids()
+    if len(running_ids) == 0:
+        return None
     return django_rq.get_queue('bot').fetch_job(running_ids[0])
 
 

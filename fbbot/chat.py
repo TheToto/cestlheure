@@ -115,6 +115,7 @@ async def start(loop):
             break
         if "actions" in current_job.meta:
             for i in current_job.meta["actions"]:
+                print("Do action : ", i)
                 await client.do_action(i)
             current_job.meta["actions"].clear()
             current_job.save_meta()
