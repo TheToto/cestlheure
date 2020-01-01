@@ -15,7 +15,7 @@ function setUp_cur() {
         })
         .then(function (chart_curmonth) {
             window.myCur.data = chart_curmonth;
-            window.myCur.options.title.text = "Classement " + (month < 10 ? '0' + month : month) + "/" + year;
+            document.getElementById("cur_title").innerText = "Classement " + (month < 10 ? '0' + month : month) + "/" + year;
             window.myCur.update();
         });
 }
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
             responsive: true,
             maintainAspectRatio: false,
             title: {
-                display: true,
+                display: false,
                 text: 'Classement du mois'
             },
             tooltips: {
@@ -44,14 +44,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 xAxes: [{
                     display: true,
                     scaleLabel: {
-                        display: true,
+                        display: false,
                         labelString: 'Jours'
                     }
                 }],
                 yAxes: [{
                     display: true,
                     scaleLabel: {
-                        display: true,
+                        display: false,
                         labelString: 'Points'
                     }
                 }]

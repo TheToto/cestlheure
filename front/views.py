@@ -17,6 +17,10 @@ class HomePageView(TemplateView):
         return context
 
 
+class DashView(HomePageView):
+    template_name = "dash/dashboard.html"
+
+
 def by_day_chart_view(request, year, month):
     return JsonResponse(chart_ready_by_day(year, month), safe=False)
 

@@ -1,0 +1,22 @@
+<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+    <!-- Sidebar Toggle (Topbar) -->
+    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+        <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Topbar Navbar -->
+    <h5 class="mt-2 d-none d-md-block" style="display: inline">Dernier "C'est L'Heure" : </h5>
+    {% if latest_cestlheure %}
+        <img src="{{ latest_cestlheure.message.author.photo_url }}" class="ml-3 mr-2 rounded">
+        <div class="media-body">
+            <h5 style="display: inline">{{ latest_cestlheure.message.author.name }} - </h5>
+            <p style="display: inline">
+                {{ latest_cestlheure.message.time | date:"m/d/Y H:i:s" }}.{{ latest_cestlheure.message.time | date:"u" | slice:":3" }}
+            </p>
+            <span style="color: black"> - {{ latest_cestlheure.message.text }}</span>
+        </div>
+    {% else %}
+        <span class="ml-3">Aucun C'est L'heure...</span>
+    {% endif %}
+</nav>

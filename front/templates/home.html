@@ -1,4 +1,6 @@
-{% extends "global.html" %} {% block body %}
+{% extends "global.html" %}
+{% load static %}
+{% block body %}
 
     <br/>
     <h2>Dernier "C'est L'heure"</h2>
@@ -13,6 +15,7 @@
         </div>
     </div>
     <hr>
+    <h3 id="cur_title">Classement du mois</h3>
     <button id="cur_prev" type="button" class="btn btn-primary">Mois précédent</button> -
     <button id="cur_next" type="button" class="btn btn-primary">Mois suivant</button>
     <div class="row">
@@ -76,6 +79,6 @@
         </div>
     </div>
 
-    <script src="static/chart_global.js"></script>
-    <script src="static/chart_cur.js"></script>
+    <script src="{% static "chart_global.js" %}"></script>
+    <script src="{% static "chart_cur.js" %}"></script>
 {% endblock %}
