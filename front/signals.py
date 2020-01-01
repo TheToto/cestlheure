@@ -29,7 +29,7 @@ def update_index(new_message):
     if index is None:
         CestLheureIndex.objects.create(last_listened=new_message)
     elif index.last_listened.time > new_message.time:
-        print("ERROR !! Need re-listening")
+        print("ERROR !! Need re-listening : ", index.last_listened.time, " > ", new_message.time)
     else:
         index.last_listened = new_message
         index.save()

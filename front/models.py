@@ -16,7 +16,7 @@ class CestLheure(models.Model):
 
     @classmethod
     def build_obj(cls, message):
-        return cls(message=message, exact_date=message.time.replace(second=0, microsecond=0))
+        return cls(message=message, exact_date=message.time.astimezone().replace(second=0, microsecond=0))
 
 
 class CestLheureIndex(models.Model):
