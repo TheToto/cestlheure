@@ -34,10 +34,13 @@ class CestLheureBot(Client):
             print(listen_job.result)
             if listen_job.result is not None:
                 for i in listen_job.result:
-                    if 'react' in i:
-                        await self.react_to_message(i['message_uid'], i['react'])
-                    elif 'send' in i:
-                        await self.send(i['send'], thread_id, ThreadType.GROUP)
+                    await self.do_action(i)
+
+    async def do_action(self, action):
+        if 'react' in action:
+            await self.react_to_message(action['message_uid'], action['react'])
+        elif 'send' in action:
+            await self.send(action['send'], os.environ["THREAD_ID_CESTLHEURE"], ThreadType.GROUP)
 
 
 async def dump_users(client):
@@ -101,10 +104,25 @@ async def start(loop):
     print("Bot uid : ", client.uid)
     client.listen(markAlive=True)
 
+    import rq
+    import django_rq
+    connection = django_rq.get_connection('bot')
+    job_id = rq.get_current_job(connection).id
+    while True:
+        current_job = django_rq.get_queue('bot').fetch_job(job_id)
+        if current_job is None or "kill" in current_job.meta:
+            # Job was cancelled, exit.
+            break
+        if "actions" in current_job.meta:
+            for i in current_job.meta["actions"]:
+                await client.do_action(i)
+            current_job.meta["actions"].clear()
+            current_job.save_meta()
+        await asyncio.sleep(10)
+
 
 @job('bot')
 def launch_bot():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.run_until_complete(start(loop))
-    loop.run_forever()

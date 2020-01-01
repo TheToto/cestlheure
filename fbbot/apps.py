@@ -2,15 +2,15 @@ import os
 from django.apps import AppConfig
 
 
+def test2():
+    print("test!!")
+
+
 class FbbotConfig(AppConfig):
     name = 'fbbot'
 
     def ready(self):
         if os.environ.get('ENABLE_BOT', None) == 'true':
-            import django_rq
-            print("Empty queues")
-            django_rq.get_queue('bot').empty()
-            django_rq.get_queue('listen').empty()
-            from .chat import launch_bot
-            launch_bot.delay()
-            print("Launch bot job")
+            from scripts import setup_cron, launch_bot
+            launch_bot.run()
+            setup_cron.run()

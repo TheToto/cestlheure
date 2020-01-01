@@ -142,4 +142,4 @@ RQ_QUEUES = {
     },
 }
 
-RQ_SHOW_ADMIN_LINK = False
+RQ_SHOW_ADMIN_LINK = True
