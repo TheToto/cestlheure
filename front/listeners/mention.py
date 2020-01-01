@@ -22,7 +22,7 @@ class MentionListener(GenericListener):
 
     def valid_action(self):
         self.result.append(
-            {'send': Message(text=f'Classement : http://cestlheure(dot)tk/cestlheure/ \n'
-                                  f'Ton évolution : http://cestlheure(dot)tk/cestlheure/user/{self.message.author.uid}',
+            {'send': Message(text=f'Classement : {os.environ["WEBSITE_ROOT"]}/cestlheure/ \n'
+                                  f'Ton évolution : {os.environ["WEBSITE_ROOT"]}/cestlheure/user/{self.message.author.uid}',
                              reply_to_id=self.message.uid)}
         )
