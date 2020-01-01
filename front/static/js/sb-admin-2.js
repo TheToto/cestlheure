@@ -7,6 +7,9 @@
     $(".sidebar").toggleClass("toggled");
     if ($(".sidebar").hasClass("toggled")) {
       $('.sidebar .collapse').collapse('hide');
+      $('#collapseUsers').removeClass("d-md-block");
+    } else {
+      $('#collapseUsers').addClass("d-md-block");
     }
     ;
   });
