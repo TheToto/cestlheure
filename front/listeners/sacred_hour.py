@@ -19,7 +19,7 @@ class SacredHourListener(GenericListener):
 
     def valid_action(self):
         print("C'est L'heure !")
-        CestLheure.build_obj(self.message, self.NAME).save()
+        self.save_to_db()
         self.result.append({'react': MessageReaction.HEART, 'message_uid': self.message.uid})
 
     def late_action(self):

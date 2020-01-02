@@ -11,6 +11,7 @@ class ListCheckListener(GenericListener):
         return t in self.LIST_HOURS
 
     def valid_action(self):
+        self.save_to_db()
         self.result.append(
             {'send': Message(text=self.MESSAGE_CONTENT,
                              reply_to_id=self.message.uid)}

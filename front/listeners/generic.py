@@ -36,5 +36,8 @@ class GenericListener:
     def valid_action(self):
         pass
 
+    def save_to_db(self):
+        CestLheure.build_obj(self.message, self.NAME).save()
+
     def late_action(self):
         pass
