@@ -44,7 +44,7 @@
              data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 {% for user in users %}
-                    <a class="collapse-item" href="#">
+                    <a class="collapse-item" href="{% url "user" pk=user.uid %}">
                         <img class="rounded" height="32" width="32" src="{{ user.photo_url }}"
                              alt="avatar"/> {{ user.name | truncatechars:15 }}
                     </a>

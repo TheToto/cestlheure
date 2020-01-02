@@ -4,44 +4,8 @@ function setUp_user() {
             return response.json();
         })
         .then(function (chart_user) {
-            console.log(chart_user);
-            let labels = Array.from(Array(31 + 1).keys()).slice(1); // [1,2,3,...,31]
-
-            let chart_dataset = [];
-            for (let i in chart_user) {
-                let days = new Array(31).fill(0);
-                for (let j in chart_user[i].days) {
-                    days[chart_user[i].days[j].day - 1] = chart_user[i].days[j].count;
-                }
-
-                let datas = [];
-                let counter = 0;
-                for (let day = 0; day < days.length; day++) {
-
-                    counter += days[day];
-
-                    if (chart_user[i]._id.year != new Date().getFullYear()
-                        || chart_user[i]._id.month != new Date().getMonth() + 1
-                        || day + 1 <= new Date().getDate())
-                        datas.push(counter);
-                }
-
-                let month = chart_user[i]._id.month < 10 ? "0" + chart_user[i]._id.month : chart_user[i]._id.month;
-
-                let color = "#" + ((1 << 24) * Math.random() | 0).toString(16);
-                chart_dataset.push({
-                    label: month + "/" + chart_user[i]._id.year,
-                    fill: false,
-                    backgroundColor: color,
-                    borderColor: color,
-                    data: datas,
-                });
-            }
-            var data = {
-                labels: labels,
-                datasets: chart_dataset
-            };
-            window.myUser.data = data;
+            // let color = "#" + ((1 << 24) * Math.random() | 0).toString(16);
+            window.myUser.data = chart_user;
             window.myUser.update();
         });
 }

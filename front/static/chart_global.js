@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
             responsive: true,
             maintainAspectRatio: false,
             title: {
-                display: true,
+                display: false,
                 text: 'Classement par mois'
             },
             tooltips: {
@@ -55,14 +55,14 @@ document.addEventListener('DOMContentLoaded', function () {
             scales: {
                 xAxes: [{
                     scaleLabel: {
-                        display: true,
+                        display: false,
                         labelString: 'Mois'
                     }
                 }],
                 yAxes: [{
                     stacked: false,
                     scaleLabel: {
-                        display: true,
+                        display: false,
                         labelString: 'Points'
                     }
                 }]

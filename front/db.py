@@ -1,3 +1,4 @@
+import random
 from dateutil.relativedelta import relativedelta
 from django.db.models import Count
 from django.db.models.functions import TruncMonth, TruncDay
@@ -48,6 +49,16 @@ def get_query_by_day(selected_month):
         .filter(exact_date__gte=selected_month, exact_date__lt=selected_month + relativedelta(months=+1)) \
         .annotate(day=TruncDay('message__time')) \
         .values('day', 'message__author', 'message__author__name', 'message__author__color') \
+        .annotate(total=Count('day')) \
+        .order_by('day')
+
+
+# Fetch score by day by users for selected month
+def get_query_by_day_user(user):
+    return CestLheure.objects \
+        .filter(message__author=user) \
+        .annotate(day=TruncDay('message__time')) \
+        .values('day') \
         .annotate(total=Count('day')) \
         .order_by('day')
 
@@ -105,6 +116,38 @@ def chart_ready_by_day(year, month):
         datasets[i["message__author"]]["data"][i["day"].day - 1] = last + i["total"]
 
     for i in datasets:
+        while len(datasets[i]["data"]) < numdays:
+            datasets[i]["data"].append(datasets[i]["data"][-1])
+    return {"datasets": list(datasets.values()), "labels": labels}
+
+
+# Function to prepare data for ChartJS
+def chart_ready_by_day_user(user):
+    r = lambda: random.randint(0, 255)
+    labels = list(range(1, 32))
+    by_day_user = list(get_query_by_day_user(user))
+    datasets = {}
+    for i in by_day_user:
+        month = i["day"].replace(day=1, hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
+        if month not in datasets:
+            color = '#%02X%02X%02X' % (r(), r(), r())
+            datasets[month] = {
+                "label": str(month.month) + "/" + str(month.year),
+                "data": [],
+                "fill": False,
+                "backgroundColor": color_variant(color),
+                "borderColor": color
+            }
+        last = datasets[month]["data"][-1] if len(datasets[month]["data"]) > 0 else 0
+        while len(datasets[month]["data"]) < i["day"].day:
+            datasets[month]["data"].append(last)
+        datasets[month]["data"][i["day"].day - 1] = last + i["total"]
+
+    for i in datasets:
+        if datetime.now().year == i.year and datetime.now().month == i.month:
+            numdays = datetime.now().day
+        else:
+            _, numdays = monthrange(i.year, i.month)
         while len(datasets[i]["data"]) < numdays:
             datasets[i]["data"].append(datasets[i]["data"][-1])
     return {"datasets": list(datasets.values()), "labels": labels}
