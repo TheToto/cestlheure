@@ -8,13 +8,14 @@ from .listeners.debug import DebugListener
 from .listeners.mention import MentionListener
 from .listeners.central_sym import CentralSymListener
 from .listeners.miror import MirorListener
+from .listeners.tacos import TacosListener
 
 from .models import CestLheure, CestLheureIndex
 
 
 @job('listen')
 def listen_message(message):
-    active_listeners = [SacredHourListener, CentralSymListener, MirorListener, MentionListener]
+    active_listeners = [SacredHourListener, CentralSymListener, MirorListener, TacosListener, MentionListener]
     if os.environ.get('DEBUG', "false") == "true":
         active_listeners.append(DebugListener)
 

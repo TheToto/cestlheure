@@ -1,5 +1,4 @@
 from .list_check import ListCheckListener
-from fbchat import Message
 
 
 class MirorListener(ListCheckListener):
