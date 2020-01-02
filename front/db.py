@@ -62,6 +62,12 @@ def get_query_by_month():
         .order_by('month')
 
 
+def get_current_month_score():
+    now = datetime.now().astimezone()
+    return CestLheure.objects.filter(
+        exact_date__year=now.year, exact_date__month=now.month).count()
+
+
 def color_variant(hex, factor=0.5):
     if hex is None:
         return "#000000"

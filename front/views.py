@@ -1,7 +1,8 @@
 from django.views.generic.base import TemplateView
 from django.http import JsonResponse
 
-from .db import get_latest_cestlheure, get_global_score, chart_ready_by_day, chart_ready_by_month, get_stars
+from .db import get_latest_cestlheure, get_global_score, chart_ready_by_day, chart_ready_by_month, get_stars, \
+    get_current_month_score
 from fbbot.models import User
 
 
@@ -19,6 +20,11 @@ class HomePageView(TemplateView):
 
 class DashView(HomePageView):
     template_name = "dash/dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['month_score_current'] = get_current_month_score()
+        return context
 
 
 def by_day_chart_view(request, year, month):
