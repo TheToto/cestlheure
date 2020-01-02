@@ -134,6 +134,14 @@ def chart_ready_by_day(year, month):
 
     by_day = list(get_query_by_day(date))
     datasets = {}
+    datasets["total"] = {
+        "label": "Equipe par jour",
+        "data": [0] * numdays,
+        "borderDash": [5, 5],
+        "fill": False,
+        "backgroundColor": "#000000",
+        "borderColor": "#000000",
+    }
     for i in by_day:
         if i["message__author"] not in datasets:
             datasets[i["message__author"]] = {
@@ -147,6 +155,7 @@ def chart_ready_by_day(year, month):
         while len(datasets[i["message__author"]]["data"]) < i["day"].day:
             datasets[i["message__author"]]["data"].append(last)
         datasets[i["message__author"]]["data"][i["day"].day - 1] = last + i["total"]
+        datasets["total"]["data"][i["day"].day - 1] += i["total"]
 
     for i in datasets:
         while len(datasets[i]["data"]) < numdays:
