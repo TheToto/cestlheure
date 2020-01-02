@@ -114,7 +114,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/rewrite/static/'
+STATIC_URL = '/cestlheure/static/'
 
 redis_host = os.environ.get('REDIS_HOST', 'localhost')
 redis_port = 6379

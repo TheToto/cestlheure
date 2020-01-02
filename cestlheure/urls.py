@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path('rewrite/', include('front.urls')),
-    path('rewrite/admin/', admin.site.urls),
-    path('rewrite/rq/', include('django_rq.urls'))
+    path('cestlheure/', include('front.urls')),
+    path('cestlheure/admin/', admin.site.urls),
+    path('cestlheure/rq/', include('django_rq.urls'))
 ]
