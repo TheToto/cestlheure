@@ -16,3 +16,7 @@ class ListCheckListener(GenericListener):
             {'send': Message(text=self.MESSAGE_CONTENT,
                              reply_to_id=self.message.uid)}
         )
+
+    def cancel_last_action(self):
+        super().cancel_last_action()
+        self.latest.delete()

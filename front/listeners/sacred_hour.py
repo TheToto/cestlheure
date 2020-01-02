@@ -22,11 +22,6 @@ class SacredHourListener(GenericListener):
         self.save_to_db()
         self.result.append({'react': MessageReaction.HEART, 'message_uid': self.message.uid})
 
-    def late_action(self):
-        if self.latest.message.time > self.message.time:
-            # Oops... Listen messages in wrong order...
-            # TODO : This need to be generic to all listeners...
-            print("Fix hour.")
-            self.result.append({'react': MessageReaction.NO, 'message_uid': self.latest.message.uid})
-            self.latest.delete()
-            self.valid_action()
+    def cancel_last_action(self):
+        super().cancel_last_action()
+        self.latest.delete()

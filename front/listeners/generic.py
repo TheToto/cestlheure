@@ -1,5 +1,7 @@
 from ..models import CestLheure
 
+from fbchat import MessageReaction
+
 
 class GenericListener:
     NAME = "undefined"
@@ -17,6 +19,9 @@ class GenericListener:
 
         if self.valid_cond():
             if self.first_cond():
+                self.valid_action()
+            elif self.wrong_order_cond():
+                self.cancel_last_action()
                 self.valid_action()
             else:
                 self.late_action()
@@ -38,6 +43,12 @@ class GenericListener:
 
     def save_to_db(self):
         CestLheure.build_obj(self.message, self.NAME).save()
+
+    def wrong_order_cond(self):
+        return self.latest.message.time > self.message.time
+
+    def cancel_last_action(self):
+        self.result.append({'react': MessageReaction.NO, 'message_uid': self.latest.message.uid})
 
     def late_action(self):
         pass
