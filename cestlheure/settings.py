@@ -38,8 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "cacheops",
     "django_rq",
     "colorfield",
+    "mathfilters",
     'fbbot',
     'front',
     'django_extensions'
@@ -125,6 +127,18 @@ CACHES = {
         'BACKEND': 'redis_cache.RedisCache',
         'LOCATION': REDIS_URL
     },
+}
+
+CACHEOPS_REDIS = 'redis://%s:%d/1' % (redis_host, redis_port)
+
+CACHEOPS_DEFAULTS = {
+    'timeout': 60 * 60
+}
+
+CACHEOPS = {
+    'fbbot.*': {'ops': 'all'},
+    'front.*': {'ops': 'all'},
+    '*.*': {},
 }
 
 RQ_QUEUES = {

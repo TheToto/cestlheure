@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
 from .db import get_latest_cestlheure, get_global_score, chart_ready_by_day, chart_ready_by_month, get_stars, \
-    get_current_month_score, chart_ready_by_day_user
+    chart_ready_by_day_user, get_various_stat_global
 from fbbot.models import User
 
 
@@ -24,7 +24,7 @@ class DashView(HomePageView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['month_score_current'] = get_current_month_score()
+        context['global_stat'] = get_various_stat_global()
         return context
 
 

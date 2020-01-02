@@ -6,11 +6,50 @@ from datetime import datetime
 from calendar import monthrange
 
 from .models import CestLheure
+from fbbot.models import Message
 
 
 # Fetch last c'est l'heure message
 def get_latest_cestlheure():
     return CestLheure.objects.latest()
+
+
+def num_hours_between(d1, d2):
+    diff = d2 - d1
+
+    days, seconds = diff.days, diff.seconds
+    hours = days * 24 + seconds // 3600
+    return hours
+
+
+def get_various_stat_global():
+    now = datetime.now().astimezone()
+    start_month = datetime.now().astimezone().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    earliest = Message.objects.earliest().time.astimezone()
+    cur_month_cestlheure = num_hours_between(start_month, now)
+    total_cestlheure = num_hours_between(earliest, now)
+    if now.minute <= now.hour:
+        cur_month_cestlheure -= 1
+        total_cestlheure -= 1
+
+    return {
+        "count_cestlheure_current":
+            CestLheure.objects.filter(exact_date__year=now.year, exact_date__month=now.month).count(),
+        "total_cestlheure_current":
+            cur_month_cestlheure,
+        "count_cestlheure":
+            CestLheure.objects.all().count(),
+        "total_cestlheure":
+            total_cestlheure,
+        "count_message_current":
+            Message.objects.filter(time__year=now.year, time__month=now.month).count(),
+        "count_message":
+            Message.objects.all().count(),
+    }
+
+
+def get_various_stat_user(user):
+    return {}
 
 
 def get_stars():
@@ -71,12 +110,6 @@ def get_query_by_month():
                 'message__author__photo_url') \
         .annotate(total=Count('month')) \
         .order_by('month')
-
-
-def get_current_month_score():
-    now = datetime.now().astimezone()
-    return CestLheure.objects.filter(
-        exact_date__year=now.year, exact_date__month=now.month).count()
 
 
 def color_variant(hex, factor=0.5):

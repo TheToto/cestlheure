@@ -1,11 +1,13 @@
 {% extends "dash/includes/global.html" %}
 {% load static %}
+{% load mathfilters %}
+{% load front_extras %}
 {% block title %}
     Dashboard
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-3 col-sm-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -13,7 +15,10 @@
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                 Nombre de C'est L'Heure ce mois ci
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ month_score_current }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ global_stat.count_cestlheure_current }}
+                                - {% widthratio global_stat.count_cestlheure_current global_stat.total_cestlheure_current 100 %}%
+                                <span class="font-weight-light">({{ global_stat.total_cestlheure_current | sub:global_stat.count_cestlheure_current }} ratés)</span>
+                            </div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -22,16 +27,17 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-3 col-sm-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Efficacité moyenne
+                                Nombre de C'est L'Heure depuis le début
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">≈
-                                {% now "j" as num_day %}{% widthratio month_score_current num_day 1 %} par jour
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ global_stat.count_cestlheure }}
+                                - {% widthratio global_stat.count_cestlheure global_stat.total_cestlheure 100 %}%
+                                <span class="font-weight-light">({{ global_stat.total_cestlheure | sub:global_stat.count_cestlheure }} ratés)</span>
                             </div>
                         </div>
                         <div class="col-auto">
@@ -50,9 +56,9 @@
                     <h6 class="m-0 font-weight-bold text-primary">Statistiques du mois</h6>
                     <p class="m-0 font-weight-bold text-primary" id="cur_title"></p>
                     <div class="btn-group">
-                        <button id="cur_prev" type="button" class="btn btn-primary"><i class="fas fa-caret-left"></i>
+                        <button id="cur_prev" type="button" class="btn btn-primary"><i class="fas fa-chevron-left"></i>
                         </button>
-                        <button id="cur_next" type="button" class="btn btn-primary"><i class="fas fa-caret-right"></i>
+                        <button id="cur_next" type="button" class="btn btn-primary"><i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
                 </div>
@@ -105,7 +111,9 @@
                                          class="rounded"/>
                                     {{ item.player.message__author__name }}
                                 </span>
-                                <span class="badge badge-secondary">{{ item.stars }} étoile(s)</span>
+                                {% search_user global_score item.player.message__author as tmp_global %}
+                                <span><span class="badge badge-secondary">{{ item.stars }} étoile(s)</span><span
+                                        class="badge badge-info ml-2">{{ tmp_global.total | intdiv:item.stars }}/étoile</span></span>
                             </li>
                         {% endfor %}
                     </ul>
@@ -119,7 +127,6 @@
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 id="global_title" class="m-0 font-weight-bold text-primary">Statistiques par mois</h6>
-                    <p class="m-0 font-weight-bold text-primary" id="cur_title"></p>
                     <button id="global_switch" type="button" class="btn btn-primary">Score par équipe</button>
 
                 </div>
