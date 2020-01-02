@@ -7,6 +7,8 @@ from fbchat import Message
 
 
 class MentionListener(GenericListener):
+    NAME = "mention"
+
     def valid_cond(self):
         try:
             if "mentions" in self.message.full_object:

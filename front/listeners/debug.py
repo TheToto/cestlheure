@@ -4,6 +4,8 @@ from fbchat import MessageReaction
 
 
 class DebugListener(GenericListener):
+    NAME = "debug"
+
     def valid_cond(self):
         return True
 

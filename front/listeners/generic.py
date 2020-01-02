@@ -1,9 +1,16 @@
+from ..models import CestLheure
+
+
 class GenericListener:
+    NAME = "undefined"
+
     def __init__(self, message):
         self.message = message
         self.time = message.time.astimezone()
         self.exact_date = self.time.replace(second=0, microsecond=0)
         self.result = []
+        self.latest = CestLheure.objects.filter(type=self.NAME).latest() \
+            if CestLheure.objects.filter(type=self.NAME).exists() else None
 
         if self.before_cond():
             self.before_action()
@@ -24,7 +31,7 @@ class GenericListener:
         return False
 
     def first_cond(self):
-        return False
+        return self.latest is None or self.latest.exact_date != self.exact_date
 
     def valid_action(self):
         pass
