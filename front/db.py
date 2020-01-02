@@ -16,9 +16,8 @@ def get_latest_cestlheure():
 
 def num_hours_between(d1, d2):
     diff = d2 - d1
-
     days, seconds = diff.days, diff.seconds
-    hours = days * 24 + seconds // 3600
+    hours = days * 24 + round(seconds / 3600 + 0.49)
     return hours
 
 
@@ -135,7 +134,7 @@ def chart_ready_by_day(year, month):
     by_day = list(get_query_by_day(date))
     datasets = {}
     datasets["total"] = {
-        "label": "Equipe par jour",
+        "label": "Total par jour",
         "data": [0] * numdays,
         "borderDash": [5, 5],
         "fill": False,
