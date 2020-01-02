@@ -1,11 +1,18 @@
 require('dotenv').config();
 const login = require("facebook-chat-api");
 const fs = require("fs");
+const readline = require("readline");
+const otplib = require('otplib');
+
+var rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
 const options = {
     selfListen: true,
     logLevel: "warn",
-    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
+    userAgent: "Mozilla/5.0 (X11; Linux x86_64; rv:71.0) Gecko/20100101 Firefox/71.0",
     forceLogin: true
 }
 
@@ -16,7 +23,25 @@ async function generateAppState() {
             email: process.env.USERNAME,
             password: process.env.PASSWORD
         }, options, (err, api) => {
-            if (err) return reject(err);
+            if (err) {
+                switch (err.error) {
+                    case 'login-approval':
+                        const token = otplib.authenticator.generate(process.env.TOTP);
+                        err.continue(token)
+                        /*
+                        console.log('Enter code > ');
+                        rl.on('line', (line) => {
+                            console.log("code : " + line);
+                            err.continue(line);
+                            rl.close();
+                        });*/
+                        break;
+                    default:
+                        console.error(err);
+                        return reject(err);
+                }
+                return;
+            }
             console.log("Logged ! Saved to appstate.json");
             fs.writeFileSync('appstate.json', JSON.stringify(api.getAppState()));
             resolve(api);
