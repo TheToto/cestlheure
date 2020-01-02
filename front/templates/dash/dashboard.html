@@ -23,7 +23,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-12">
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -45,7 +45,75 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Classement global</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for item in global_score %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="pull-left ">
+                                    <img height="32px" src="{{ item.message__author__photo_url }}"
+                                         class="rounded"/>
+                                    {{ item.message__author__name }}
+                                </span>
+                                <span class="badge badge-secondary">{{ item.total }} point(s)</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Classement par mois</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for item in stars %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="pull-left ">
+                                    <img height="32px" src="{{ item.player.message__author__photo_url }}"
+                                         class="rounded"/>
+                                    {{ item.player.message__author__name }}
+                                </span>
+                                <span class="badge badge-secondary">{{ item.stars }} étoile(s)</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 id="global_title" class="m-0 font-weight-bold text-primary">Statistiques par mois</h6>
+                    <p class="m-0 font-weight-bold text-primary" id="cur_title"></p>
+                    <button id="global_switch" type="button" class="btn btn-primary">Score par équipe</button>
+
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="byMonth"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block scripts %}
     <script src="{% static "chart_cur.js" %}"></script>
+    <script src="{% static "chart_global.js" %}"></script>
 {% endblock %}
