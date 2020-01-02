@@ -21,6 +21,15 @@ class CestLheureListener(GenericListener):
 
     def valid_action(self):
         print("C'est L'heure !")
-        cestlheure = CestLheure.build_obj(self.message)
-        cestlheure.save()
+        CestLheure.build_obj(self.message).save()
         self.result.append({'react': MessageReaction.HEART, 'message_uid': self.message.uid})
+
+    def late_action(self):
+        last_cestlheure = CestLheure.objects.latest() if CestLheure.objects.all().exists() else None
+        if last_cestlheure is not None and last_cestlheure.exact_date == self.exact_date:
+            if last_cestlheure.message.time > self.message.time:
+                # Oops... Listen messages in wrong order...
+                self.result.append({'react': MessageReaction.NO, 'message_uid': last_cestlheure.message.uid})
+                self.result.append({'react': MessageReaction.HEART, 'message_uid': self.message.uid})
+                last_cestlheure.delete()
+                CestLheure.build_obj(self.message).save()
