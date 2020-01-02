@@ -1,0 +1,64 @@
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url "dash" %}">
+        <div class="sidebar-brand-icon">
+            <i class="far fa-clock"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">C'est L'heure</div>
+    </a>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item">
+        <a class="nav-link" href="{% url "dash" %}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        Other
+    </div>
+
+    <!-- Nav Item - Tables -->
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-fw fa-chart-line"></i>
+            <span>Charts</span></a>
+    </li>
+
+    <!-- Nav Item - Utilities Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers"
+           aria-expanded="true" aria-controls="collapseUsers">
+            <i class="fas fa-fw fa-user"></i>
+            <span>Participants</span>
+        </a>
+        <div id="collapseUsers" class="collapse d-md-block"
+             data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                {% for user in users %}
+                    <a class="collapse-item" href="{% url "user" pk=user.uid %}">
+                        <img class="rounded" height="32" width="32" src="{{ user.photo_url }}"
+                             alt="avatar"/> {{ user.name | truncatechars:15 }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
+
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+
+</ul>
