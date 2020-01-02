@@ -6,7 +6,7 @@
     </button>
 
     <!-- Topbar Navbar -->
-    <h5 class="mt-2 d-none d-md-block" style="display: inline">Dernier "C'est L'Heure" : </h5>
+    <h5 class="mt-2 d-none d-lg-block" style="display: inline">Dernier "C'est L'Heure" : </h5>
     {% if latest_cestlheure %}
         <img src="{{ latest_cestlheure.message.author.photo_url }}" class="ml-3 mr-2 rounded">
         <div class="media-body">
@@ -19,4 +19,10 @@
     {% else %}
         <span class="ml-3">Aucun C'est L'heure...</span>
     {% endif %}
+    <div class="d-none d-sm-block">
+        <a href="https://time.is/Paris" id="time_is_link" rel="nofollow" target="_blank" style="display: none;">
+            Paris :
+        </a>
+        <span id="Paris_z71f" style="font-size:28px"></span>
+    </div>
 </nav>
