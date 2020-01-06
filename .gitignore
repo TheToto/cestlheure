@@ -91,4 +91,5 @@ staticfiles/
 db.sqlite3
 .vscode/
 appstate.json
+cookie.json
 appstate.bin
