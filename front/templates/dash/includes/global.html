@@ -47,6 +47,18 @@
             <div class="container-fluid">
 
                 <!-- Page Heading -->
+
+                {% for message in messages %}
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="card border-left-warning shadow h-100">
+                                <div class="card-body">
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ message }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
                 {% block content %}{% endblock %}
 
             </div>

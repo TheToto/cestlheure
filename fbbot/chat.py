@@ -106,8 +106,12 @@ async def start(loop):
 
     import rq
     import django_rq
-    connection = django_rq.get_connection('bot')
-    job_id = rq.get_current_job(connection).id
+    job_id = rq.get_current_job(django_rq.get_connection('bot')).id
+
+    current_job = django_rq.get_queue('bot').fetch_job(job_id)
+    current_job.meta["status"] = "RUNNING"
+    current_job.save_meta()
+
     while True:
         current_job = django_rq.get_queue('bot').fetch_job(job_id)
         if current_job is None or "kill" in current_job.meta:

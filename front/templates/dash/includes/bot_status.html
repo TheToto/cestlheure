@@ -1,0 +1,32 @@
+{% load front_extras %}
+{% if bot_status is not None %}
+    <div class="col-xl-3 col-sm-6 mb-4">
+        <div class="card shadow h-100 py-2 border-left-{{ bot_status | color_bot_status }}">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-{{ bot_status | color_bot_status }} text-uppercase mb-1">
+                            Etat du bot
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            {% if bot_status == BotStatus.RUNNING %}
+                                <i class="fas fa-shield-check"></i>
+                            {% elif bot_status == BotStatus.MISSING %}
+                                <i class="fas fa-exclamation-triangle"></i>
+                            {% else %}
+                                <i class="fas fa-exclamation-circle"></i>
+                            {% endif %}
+                            {{ bot_status | to_str }}
+
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <a href="{% url "restart_bot" %}" class="btn btn-warning btn-circle" style="">
+                            <i class="fas fa-redo-alt"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

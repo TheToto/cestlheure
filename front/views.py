@@ -1,14 +1,16 @@
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 
 from .db import get_latest_cestlheure, get_global_score, chart_ready_by_day, chart_ready_by_month, get_stars, \
     chart_ready_by_day_user, get_various_stat_global
 from fbbot.models import User
+from .misc import get_bot_status
 from .models import CestLheure
 
 
-class HomePageView(TemplateView):
+class GlobalView(TemplateView):
     template_name = "home.html"
     base_query = CestLheure.objects.filter(type="sacred_hour")
 
@@ -18,10 +20,12 @@ class HomePageView(TemplateView):
         context['global_score'] = get_global_score(self.base_query)
         context['stars'] = get_stars(self.base_query)
         context['users'] = User.objects.all()
+        context['bot_status'] = get_bot_status()
         return context
 
 
-class DashView(HomePageView):
+class DashView(GlobalView):
+    alert = ""
     template_name = "dash/dashboard.html"
 
     def get_context_data(self, **kwargs):
@@ -30,16 +34,23 @@ class DashView(HomePageView):
         return context
 
 
-class UserView(DetailView):
+class UserView(GlobalView):
     template_name = "dash/user.html"
-    model = User
     base_query = CestLheure.objects.filter(type="sacred_hour")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['object'] = get_object_or_404(User, pk=context['pk'])
         context['latest_cestlheure'] = get_latest_cestlheure(self.base_query)
         context['users'] = User.objects.all()
         return context
+
+
+def restart_bot(request):
+    from scripts import launch_bot
+    launch_bot.run()
+    messages.info(request, "Le bot a bien été redémarré... Attendez quelques secondes.")
+    return redirect("dash")
 
 
 def by_day_chart_view(request, year, month):
