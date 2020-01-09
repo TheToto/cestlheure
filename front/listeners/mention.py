@@ -1,13 +1,13 @@
 import os
-import json
 
-from .generic import GenericListener
+from front.listeners.generic.generic import GenericListener
 
 from fbchat import Message
 
 
 class MentionListener(GenericListener):
     NAME = "mention"
+    SAVE_TO_DB = False
 
     def valid_cond(self):
         try:

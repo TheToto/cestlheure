@@ -1,10 +1,11 @@
-from .generic import GenericListener
+from front.listeners.generic.generic import GenericListener
 
 from fbchat import MessageReaction
 
 
 class DebugListener(GenericListener):
     NAME = "debug"
+    SAVE_TO_DB = False
 
     def valid_cond(self):
         return True
