@@ -40,7 +40,7 @@ class GenericListener:
         return False
 
     def before_action(self):
-        self.result.append({'react': MessageReaction.SAD, 'message_uid': self.latest.message.uid})
+        self.result.append({'react': MessageReaction.SAD, 'message_uid': self.message.uid})
 
     def valid_cond(self):
         return False

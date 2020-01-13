@@ -2,7 +2,7 @@ from front.listeners.generic.generic import GenericListener
 from fbchat import MessageReaction
 
 
-class ReactListener(GenericListener):
+class ReactListener():
     REACT_TYPE = MessageReaction.WOW
 
     def valid_action(self):

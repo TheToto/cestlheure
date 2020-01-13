@@ -3,20 +3,21 @@ from django_rq import job
 
 from fbbot.models import Message
 
-from .listeners.sacred_hour import SacredHourListener
-from .listeners.debug import DebugListener
-from .listeners.mention import MentionListener
-from .listeners.central_sym import CentralSymListener
-from .listeners.miror import MirorListener
-from .listeners.tacos import TacosListener
-from .listeners.suite import SuiteListener
+from front.listeners.sacred_hour import SacredHourListener
+from front.listeners.debug import DebugListener
+from front.listeners.mention import MentionListener
+from front.listeners.central_sym import CentralSymListener
+from front.listeners.miror import MirorListener
+from front.listeners.miror_plus import MirorPlusListener
+from front.listeners.tacos import TacosListener
+from front.listeners.suite import SuiteListener
 
 from .models import CestLheure, CestLheureIndex
 
 
 @job('listen')
 def listen_message(message):
-    active_listeners = [SacredHourListener, CentralSymListener, MirorListener, SuiteListener, TacosListener,
+    active_listeners = [SacredHourListener, CentralSymListener, MirorListener, MirorPlusListener, SuiteListener, TacosListener,
                         MentionListener]
     if os.environ.get('DEBUG', "false") == "true":
         active_listeners.append(DebugListener)

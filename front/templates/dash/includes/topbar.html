@@ -14,7 +14,7 @@
             <p style="display: inline">
                 {{ latest_cestlheure.message.time | date:"m/d/Y H:i:s" }}.{{ latest_cestlheure.message.time | date:"u" | slice:":3" }}
             </p>
-            <span style="color: black"> - {{ latest_cestlheure.message.text }}</span>
+            <span style="color: black"> - {{ latest_cestlheure.message.text | safe }}</span>
         </div>
     {% else %}
         <span class="ml-3">Aucun C'est L'heure...</span>

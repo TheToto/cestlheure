@@ -1,8 +1,9 @@
 from front.listeners.generic.list_check import ListCheckListener
 from front.listeners.generic.message import MessageListener
+from front.listeners.generic.generic import GenericListener
 
 
-class MirorListener(ListCheckListener, MessageListener):
+class MirorListener(ListCheckListener, MessageListener, GenericListener):
     NAME = "miror"
     LIST_HOURS = [(0, 0),
                   (1, 10),

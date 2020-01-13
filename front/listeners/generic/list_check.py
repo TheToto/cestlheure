@@ -1,7 +1,7 @@
 from front.listeners.generic.generic import GenericListener
 
 
-class ListCheckListener(GenericListener):
+class ListCheckListener():
     LIST_HOURS = []
 
     def valid_cond(self):

@@ -2,7 +2,7 @@ from front.listeners.generic.generic import GenericListener
 from fbchat import Message
 
 
-class MessageListener(GenericListener):
+class MessageListener():
     MESSAGE_CONTENT = "undefined"
 
     def valid_action(self):

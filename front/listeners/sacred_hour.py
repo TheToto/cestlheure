@@ -4,7 +4,7 @@ from front.listeners.generic.generic import GenericListener
 from front.listeners.generic.react import ReactListener
 
 
-class SacredHourListener(GenericListener, ReactListener):
+class SacredHourListener(ReactListener, GenericListener):
     NAME = "sacred_hour"
     REACT_TYPE = MessageReaction.HEART
 
