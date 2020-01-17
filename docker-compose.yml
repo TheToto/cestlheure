@@ -1,0 +1,54 @@
+version: '3'
+services:
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+
+  db:
+    image: postgres:alpine
+    restart: unless-stopped
+    volumes:
+      - /var/lib/postgres/data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    command: python manage.py runserver "0.0.0.0:8000"
+    restart: unless-stopped
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    links:
+      - redis
+      - db
+      - rqscheduler
+
+  rqlisten:
+    build: .
+    command: python manage.py rqworker listen
+    restart: unless-stopped
+    volumes:
+      - .:/code
+    depends_on:
+      - redis
+      - db
+
+  rqbot:
+    build: .
+    command: python manage.py rqworker bot
+    restart: unless-stopped
+    volumes:
+      - .:/code
+    depends_on:
+      - redis
+      - db
+
+  rqscheduler:
+    build: .
+    command: python manage.py rqscheduler
+    restart: unless-stopped
+    volumes:
+      - .:/code
+    depends_on:
+      - redis
+      - db
