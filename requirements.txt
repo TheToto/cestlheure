@@ -13,3 +13,4 @@ rq-scheduler==0.9.1
 django-colorfield==0.1.15
 django-mathfilters==0.4.0
 django-cacheops==4.2
+pymongo

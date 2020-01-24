@@ -8,12 +8,18 @@ services:
     image: postgres:alpine
     restart: unless-stopped
     volumes:
-      - /var/lib/postgres/data:/var/lib/postgresql/data
+      - cestlheure-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=cestlheure
+      - POSTGRES_PASSWORD=1234cestlheure1234
+      - POSTGRES_DB=db_cestlheure
 
   web:
     build: .
     command: python manage.py runserver "0.0.0.0:8000"
     restart: unless-stopped
+    environment:
+      - ENABLE_BOT=true
     volumes:
       - .:/code
     ports:
@@ -52,3 +58,6 @@ services:
     depends_on:
       - redis
       - db
+
+volumes:
+  cestlheure-db:

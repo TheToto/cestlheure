@@ -10,7 +10,10 @@ from fbbot.models import Message
 
 # Fetch last c'est l'heure message
 def get_latest_cestlheure(base_query):
-    return base_query.latest()
+    try:
+        return base_query.latest()
+    except Exception:
+        return None
 
 
 def num_hours_between(d1, d2):
@@ -23,7 +26,7 @@ def num_hours_between(d1, d2):
 def get_various_stat_global(base_query):
     now = datetime.now().astimezone()
     start_month = datetime.now().astimezone().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    earliest = Message.objects.earliest().time.astimezone()
+    earliest = Message.objects.earliest().time.astimezone() if Message.objects.all().exists() else datetime.now().astimezone()
     cur_month_cestlheure = num_hours_between(start_month, now)
     total_cestlheure = num_hours_between(earliest, now)
     if now.minute <= now.hour:

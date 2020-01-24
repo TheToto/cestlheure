@@ -15,7 +15,7 @@ class User(models.Model):
 
 
 class Message(models.Model):
-    uid = models.CharField(primary_key=True, max_length=50)
+    uid = models.CharField(primary_key=True, unique=True, max_length=50)
     text = models.TextField(null=True, blank=True)
     author = models.ForeignKey('User', on_delete=models.DO_NOTHING)
     time = models.DateTimeField()
