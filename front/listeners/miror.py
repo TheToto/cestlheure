@@ -5,6 +5,7 @@ from front.listeners.generic.generic import GenericListener
 
 class MirorListener(ListCheckListener, MessageListener, GenericListener):
     NAME = "miror"
+    FULL_NAME = "Miroir"
     LIST_HOURS = [(0, 0),
                   (1, 10),
                   (2, 20),

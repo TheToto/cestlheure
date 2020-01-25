@@ -6,6 +6,7 @@ from fbchat import MessageReaction
 class GenericListener:
     SAVE_TO_DB = True
     NAME = "undefined"
+    FULL_NAME = "undefined"
 
     def __init__(self, message):
         self.message = message

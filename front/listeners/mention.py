@@ -7,6 +7,7 @@ from fbchat import Message
 
 class MentionListener(GenericListener):
     NAME = "mention"
+    FULL_NAME = "Mention"
     SAVE_TO_DB = False
 
     def valid_cond(self):

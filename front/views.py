@@ -8,24 +8,32 @@ from .db import get_latest_cestlheure, get_global_score, chart_ready_by_day, cha
 from fbbot.models import User
 from .misc import get_bot_status
 from .models import CestLheure
+from .signals import AVAILABLE_LISTENERS
+
+
+def get_base_query(request):
+    if "active_listener" not in request.session:
+        request.session['active_listener'] = ['sacred_hour']
+    selectors = request.session['active_listener']
+    print(selectors)
+    return CestLheure.objects.filter(type__in=selectors)
 
 
 class GlobalView(TemplateView):
-    template_name = "home.html"
-    base_query = CestLheure.objects.filter(type="sacred_hour")
 
     def get_context_data(self, **kwargs):
+        self.base_query = get_base_query(self.request)
         context = super().get_context_data(**kwargs)
         context['latest_cestlheure'] = get_latest_cestlheure(self.base_query)
         context['global_score'] = get_global_score(self.base_query)
         context['stars'] = get_stars(self.base_query)
         context['users'] = User.objects.all()
         context['bot_status'] = get_bot_status()
+        context['listeners'] = AVAILABLE_LISTENERS
         return context
 
 
 class DashView(GlobalView):
-    alert = ""
     template_name = "dash/dashboard.html"
 
     def get_context_data(self, **kwargs):
@@ -36,13 +44,10 @@ class DashView(GlobalView):
 
 class UserView(GlobalView):
     template_name = "dash/user.html"
-    base_query = CestLheure.objects.filter(type="sacred_hour")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['object'] = get_object_or_404(User, pk=context['pk'])
-        context['latest_cestlheure'] = get_latest_cestlheure(self.base_query)
-        context['users'] = User.objects.all()
         return context
 
 
@@ -54,16 +59,25 @@ def restart_bot(request):
 
 
 def by_day_chart_view(request, year, month):
-    base_query = CestLheure.objects.filter(type="sacred_hour")
+    base_query = get_base_query(request)
     return JsonResponse(chart_ready_by_day(base_query, year, month), safe=False)
 
 
 def by_month_chart_view(request):
-    base_query = CestLheure.objects.filter(type="sacred_hour")
+    base_query = get_base_query(request)
     return JsonResponse(chart_ready_by_month(base_query), safe=False)
 
 
 def by_day_user_chart_view(request, pk):
-    base_query = CestLheure.objects.filter(type="sacred_hour")
+    base_query = get_base_query(request)
     user = get_object_or_404(User, pk=pk)
     return JsonResponse(chart_ready_by_day_user(base_query, user), safe=False)
+
+
+def update_selector(request):
+    print(request.POST)
+    print(request.POST.getlist('active_listener'))
+    if request.POST.get('active_listener', None):
+        request.session['active_listener'] = request.POST.getlist('active_listener')
+        print(request.session['active_listener'])
+    return redirect(request.POST.get('next', '/'))

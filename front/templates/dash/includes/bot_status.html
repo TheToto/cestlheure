@@ -9,15 +9,8 @@
                             Etat du bot
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                            {% if bot_status == BotStatus.RUNNING %}
-                                <i class="fas fa-shield-check"></i>
-                            {% elif bot_status == BotStatus.MISSING %}
-                                <i class="fas fa-exclamation-triangle"></i>
-                            {% else %}
-                                <i class="fas fa-exclamation-circle"></i>
-                            {% endif %}
+                            <i class="{{ bot_status | icon_bot_status }}"></i>
                             {{ bot_status | to_str }}
-
                         </div>
                     </div>
                     <div class="col-auto">

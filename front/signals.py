@@ -1,5 +1,6 @@
 import os
 from django_rq import job
+from enum import Enum
 
 from fbbot.models import Message
 
@@ -15,15 +16,17 @@ from front.listeners.suite import SuiteListener
 from .models import CestLheure, CestLheureIndex
 
 
+AVAILABLE_LISTENERS = [SacredHourListener, CentralSymListener, MirorListener, MirorPlusListener, SuiteListener, TacosListener,
+                        MentionListener]
+
+
 @job('listen')
 def listen_message(message):
-    active_listeners = [SacredHourListener, CentralSymListener, MirorListener, MirorPlusListener, SuiteListener, TacosListener,
-                        MentionListener]
     if os.environ.get('DEBUG', "false") == "true":
         active_listeners.append(DebugListener)
 
     res = []
-    for listener in active_listeners:
+    for listener in AVAILABLE_LISTENERS:
         res += listener(message).result
 
     update_index(message)

@@ -7,6 +7,7 @@ from front.listeners.generic.generic import GenericListener
 
 class MirorPlusListener(ListCheckListener, ReactListener, GenericListener):
     NAME = "miror_plus"
+    FULL_NAME = "Miroir (Plus)"
     LIST_HOURS = [(7, 0),
                   (8, 10),
                   (9, 20),

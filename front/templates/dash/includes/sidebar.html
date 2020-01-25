@@ -1,3 +1,4 @@
+{% load front_extras %}
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
@@ -33,6 +34,37 @@
             <span>Charts</span></a>
     </li>
 
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSelector"
+           aria-expanded="true" aria-controls="collapseSelector">
+            <i class="fas fa-fw fa-user"></i>
+            <span>Sélecteur d'horaire</span>
+        </a>
+        <div id="collapseSelector" class="collapse d-md-block"
+             data-parent="#collapseSelector">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <form class="ml-3" method="POST" action="{% url "update_selector" %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    {% listeners_format listeners as formated_listeners %}
+                    {% for l in formated_listeners %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="active_listener" value="{{ l.name }}" id="{{ l.name }}"
+                            {% if l.name in request.session.active_listener %}
+                                checked
+                            {% endif %}
+                            >
+                            <label class="form-check-label" for="{{ l.name }}">
+                            {{ l.full_name }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-sm btn-primary mt-2">Mettre à jour</button>
+                </form> 
+            </div>
+        </div>
+    </li>
+
     <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers"
@@ -41,7 +73,7 @@
             <span>Participants</span>
         </a>
         <div id="collapseUsers" class="collapse d-md-block"
-             data-parent="#accordionSidebar">
+             data-parent="#collapseUsers">
             <div class="bg-white py-2 collapse-inner rounded">
                 {% for user in users %}
                     <a class="collapse-item" href="{% url "user" pk=user.uid %}">

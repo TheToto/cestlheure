@@ -5,6 +5,7 @@ from fbchat import MessageReaction
 
 class DebugListener(GenericListener):
     NAME = "debug"
+    FULL_NAME = "Debug"
     SAVE_TO_DB = False
 
     def valid_cond(self):

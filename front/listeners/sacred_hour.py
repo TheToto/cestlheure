@@ -6,6 +6,7 @@ from front.listeners.generic.react import ReactListener
 
 class SacredHourListener(ReactListener, GenericListener):
     NAME = "sacred_hour"
+    FULL_NAME = "Heure sacrée"
     REACT_TYPE = MessageReaction.HEART
 
     def before_cond(self):
