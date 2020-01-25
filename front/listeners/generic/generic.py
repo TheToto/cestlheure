@@ -31,6 +31,8 @@ class GenericListener:
             elif self.wrong_order_cond():
                 if self.SAVE_TO_DB:
                     self.latest.delete()
+                    self.current = CestLheure.build_obj(self.message, self.NAME)
+                    self.current.save()
                 self.cancel_last_action()
                 self.valid_action()
 
